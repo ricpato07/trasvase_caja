@@ -1,0 +1,41 @@
+<div ng-form="modalform.form">
+    <div style='text-align:right; width: 600px;' class='modal-header'>
+        <button class='btn btn-primary' ng-click='close()'> X</button>
+    </div>
+    <div class='modal-body' style='width: 600px;height: 250px;'>
+        <div class='form-group' ng-class="{'has-error':modalform.form.precinto.$invalid && modalform.form.precinto.$touched}">
+            <label for='precinto'>Precinto 1:</label>
+            <input type='text'
+                   class='form-control'
+                   id='precinto' name="precinto"
+                   ng-model='catform.precinto'
+                   ng-maxlength='15'
+                   maxlength='15'
+                   ng-pattern='precinto_pattern'
+                   required>
+            <span class='mensaje-form' ng-show='modalform.form.precinto.$error.pattern'>* El formato del precinto es incorrecto<br/></span>
+        </div>
+        <div class='form-group' ng-class="{'has-error':modalform.form.precinto2.$invalid && modalform.form.precinto2.$touched}">
+            <label for='precinto2'>Precinto 2:</label>
+            <input type='text'
+                   class='form-control'
+                   id='precinto2' name="precinto2"
+                   ng-model='catform.precinto2'
+                   ng-maxlength='15'
+                   maxlength='15'
+                   ng-pattern='precinto_pattern'
+                   ng-keyup="$event.keyCode == 13 ? cerrar_caja_confirm() : null"
+                   required>
+            <span class='mensaje-form' ng-show='modalform.form.precinto2.$error.pattern'>* El formato del precinto es incorrecto<br/></span>
+            <span class='mensaje-form' ng-show='modalform.form.precinto2.$error.error_precinto'>* El precinto 2 es igual al precinto 1<br/></span>
+        </div>
+        <div>
+            <button ng-click='cerrar_caja_confirm()'
+                    type='button'
+                    ng-disabled="!modalform.form.$valid"
+                    class='btn btn btn-primary'>
+                Cerrar caja
+            </button>
+        </div>
+    </div>
+</div>
