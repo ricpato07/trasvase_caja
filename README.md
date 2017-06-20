@@ -1,2 +1,2 @@
-# lte-seed
-Template admin-lte para Angular 1.5.8
+# trasvase_caja
+Módulo de trasvase de cajas
