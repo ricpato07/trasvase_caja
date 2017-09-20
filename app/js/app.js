@@ -37,7 +37,7 @@ angular.module('myApp', [
                 return gridOptions;
             }]);
 
-            $urlRouterProvider.otherwise('/trasvase_caja');
+            $urlRouterProvider.otherwise('/logistica_interna');
             $stateProvider
                 .state('login', {
                     url: '/login',
@@ -57,5 +57,10 @@ angular.module('myApp', [
                     url: '/trasvase_caja',
                     templateUrl: 'views/panel/trasvasecaja.html',
                     controller: 'TrasvasecajaController'
+                })
+                .state('logistica_interna', {
+                    url: '/logistica_interna',
+                    templateUrl: 'views/panel/logisticainterna.html',
+                    controller: 'LogisticainternaController'
                 })
         }]);

@@ -1,0 +1,25 @@
+<div ng-form="modalform.form">
+    <div style='text-align:right; width: 600px;' class='modal-header'>
+        <button class='btn btn-primary' ng-click='close()'> X</button>
+    </div>
+    <div class='modal-body' style='width: 600px;height: 500px;'>
+       <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Valijas faltantes ({{faltanteslist.length}})</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div style="overflow-y: scroll;">
+                            <div class="col-md-12" style="height: 400px;">
+                                <div ng-repeat="item in faltanteslist">
+                                    <p class="item">
+                                        <span class="item_list_round"><strong>{{item.pk.svalija}}</strong></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>        
+    </div>
+</div>

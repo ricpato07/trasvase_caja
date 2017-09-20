@@ -20,6 +20,7 @@ angular.module('myApp')
         var caja_pattern = /^[S][0-9]{8}$/;
         var expediente_pattern = /^[U][0-9]{10}$/;
         var precinto_pattern = /^[C][V][0-9]{6}[ ][0-9]{6}$/;
+        var valija_pattern = /^[G][0-9]{12}$/;
 
         return {
             validamail: function (mail) {
@@ -170,6 +171,9 @@ angular.module('myApp')
             },
             precinto_pattern: function () {
                 return precinto_pattern;
+            },
+            valija_pattern: function () {
+                return valija_pattern;
             },
             formats_date: function () {
                 return formats;

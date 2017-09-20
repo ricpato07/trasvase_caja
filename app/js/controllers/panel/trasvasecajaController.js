@@ -224,9 +224,6 @@ angular.module('myApp')
                     $scope.openmodal();
                 };
 
-                $scope.close = function () {
-                    $modalInstance.close();
-                };
 
                 $scope.quitar_item = function (etiqueta) {
                     var res = window.confirm("¿En verdad deseas borrar el expediente U0" + etiqueta + "?");
@@ -263,6 +260,7 @@ angular.module('myApp')
 
 
                 $scope.cerrar_caja_confirm = function () {
+
                     var cat = sharedProperties.getObject();
                     var params = {
                         idtrasvase: $scope.cat.idtrasvase,
@@ -300,34 +298,40 @@ angular.module('myApp')
                 };
 
                 $scope.cerrar_caja_confirm = function () {
-                    $modalInstance.close();
-                    var cat = sharedProperties.getObject();
-                    cat.precinto = $scope.catform.precinto;
-                    cat.precinto2 = $scope.catform.precinto2;
-                    sharedProperties.setObject(cat);
-                    $rootScope.$emit("CerrarCajaConfirm", {});
+                    if ($scope.modalform.form !== undefined) {
+                        if (!$scope.modalform.form.$valid) {
+                            alert("Es necesario colocar los precintos para cerrar la caja.");
+                            return;
+                        }
+                        $modalInstance.close();
+                        var cat = sharedProperties.getObject();
+                        cat.precinto = $scope.catform.precinto;
+                        cat.precinto2 = $scope.catform.precinto2;
+                        sharedProperties.setObject(cat);
+                        $rootScope.$emit("CerrarCajaConfirm", {});
+                    }
                 };
 
                 $scope.$watch('catform.precinto', function (newValue, oldValue) {
-                    
+
                     if ($scope.modalform.form !== undefined) {
                         if (newValue != undefined && newValue != "") {
                             if ($scope.catform.precinto == $scope.catform.precinto2) {
                                 $scope.modalform.form.precinto2.$setValidity('error_precinto', false);
-                            }else{
+                            } else {
                                 $scope.modalform.form.precinto2.$setValidity('error_precinto', true);
                             }
                         }
                     }
                 });
-                
+
                 $scope.$watch('catform.precinto2', function (newValue, oldValue) {
-                    
+
                     if ($scope.modalform.form !== undefined) {
                         if (newValue != undefined && newValue != "") {
                             if ($scope.catform.precinto == $scope.catform.precinto2) {
                                 $scope.modalform.form.precinto2.$setValidity('error_precinto', false);
-                            }else{
+                            } else {
                                 $scope.modalform.form.precinto2.$setValidity('error_precinto', true);
                             }
                         }
