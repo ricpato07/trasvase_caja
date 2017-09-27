@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('myApp')
-        .controller('LogisticainternaController', ['$scope', '$timeout', '$modal', '$rootScope', '$stateParams', 'ValidaService', 'ConsultaService', 'MessageService', 'sharedProperties',
+        .controller('LogisticaexternaController', ['$scope', '$timeout', '$modal', '$rootScope', '$stateParams', 'ValidaService', 'ConsultaService', 'MessageService', 'sharedProperties',
             function ($scope, $timeout, $modal, $rootScope, $stateParams, ValidaService, ConsultaService, MessageService, sharedProperties) {
                 $scope.forma = {};
                 $scope.cat = {};
@@ -24,7 +24,7 @@ angular.module('myApp')
                         return;
                     }
 
-                    ConsultaService.getRestAngular("valida_lote.action?idLote=" + $scope.cat.idLote)
+                    ConsultaService.getRestAngular("valida_lote_banco.action?idLote=" + $scope.cat.idLote)
                             .then(function (result) {
                                 console.log("lote");
                                 console.log(result);
@@ -50,7 +50,7 @@ angular.module('myApp')
                             .then(function (result) {
                                 console.log("usuario");
                                 console.log(result);
-                                $scope.cat.personaRecibe = result.user.nombre;
+                                $scope.cat.personaBancoRecibe = result.user.nombre;
                             })
                             .catch(function (error) {
                                 console.log(error);
@@ -68,11 +68,11 @@ angular.module('myApp')
                         return;
                     }
                                        
-                    if ($scope.cat.personaEntrega === undefined || $scope.cat.personaEntrega === null) {
+                    if ($scope.cat.personaBancoEntrega === undefined || $scope.cat.personaBancoEntrega === null) {
                         alert("Debes colocar el nombre de la persona que entrega");
                         return;
                     }
-                    if ($scope.cat.personaRecibe === undefined || $scope.cat.personaRecibe === null) {
+                    if ($scope.cat.personaBancoRecibe === undefined || $scope.cat.personaBancoRecibe === null) {
                         alert("Debes colocar el nombre de la persona que recibe");
                         return;
                     }
@@ -86,9 +86,9 @@ angular.module('myApp')
                         precinto: $scope.valija.precinto,
                         fecha: null,
                         usuario: null,
-                        status: 2
+                        status: 4
                     };
-                    ConsultaService.setRestAngular("valida_lote_valijas.action", params)
+                    ConsultaService.setRestAngular("valida_lote_valijas_banco.action", params)
                             .then(function (result) {
                                 console.log(result);
                                 $scope.listar_valijas();
@@ -112,7 +112,7 @@ angular.module('myApp')
                 };
 
                 $scope.listar_valijas = function () {
-                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + $scope.cat.idLote + "&status=2", null)
+                    ConsultaService.listRestAngular("lista_lote_valijas_banco.action?idLote=" + $scope.cat.idLote + "&status=4", null)
                             .then(function (result) {
                                 console.log("valijaslist");
                                 console.log(result);
@@ -138,12 +138,6 @@ angular.module('myApp')
                     $scope.forma.form.precinto.$error = {};
                     $scope.forma.form.persona_entrega.$error = {};
                     $scope.forma.form.persona_recibe.$error = {};
-                    /*$scope.forma.form.lote.$invalid = false;
-                     $scope.forma.form.valija.$invalid = false;
-                     $scope.forma.form.precinto.$invalid = false;
-                     $scope.forma.form.persona_entrega.$invalid = false;
-                     $scope.forma.form.persona_recibe.$invalid = false;
-                     */
                     $scope.forma.form.persona_entrega.$invalid = false;
                     $scope.forma.form.lote.$touched = false;
                     $scope.forma.form.valija.$touched = false;
@@ -187,11 +181,11 @@ angular.module('myApp')
 
                 $scope.guardar = function () {
                     
-                    if ($scope.cat.personaEntrega === undefined || $scope.cat.personaEntrega === null) {
+                    if ($scope.cat.personaBancoEntrega === undefined || $scope.cat.personaBancoEntrega === null) {
                         alert("Debes colocar el nombre de la persona que entrega");
                         return;
                     }
-                    if ($scope.cat.personaRecibe === undefined || $scope.cat.personaRecibe === null) {
+                    if ($scope.cat.personaBancoRecibe === undefined || $scope.cat.personaBancoRecibe === null) {
                         alert("Debes colocar el nombre de la persona que recibe");
                         return;
                     }
@@ -204,13 +198,13 @@ angular.module('myApp')
                             scltcod: null,
                             fecha: null,
                             usuario: null,
-                            personaEntrega: $scope.cat.personaEntrega,
-                            personaRecibe: $scope.cat.personaRecibe,
-                            personaBancoEntrega: null,
-                            personaBancoRecibe: null
+                            personaEntrega: null,
+                            personaRecibe: null,
+                            personaBancoEntrega:$scope.cat.personaBancoEntrega,
+                            personaBancoRecibe: $scope.cat.personaBancoRecibe        
                         };
                         
-                        ConsultaService.setRestAngular("save_lote_logistica.action", params)
+                        ConsultaService.setRestAngular("save_lote_logistica_banco.action", params)
                                 .then(function (result) {
                                     console.log(result);
                                     $scope.limpiar_error();
@@ -228,7 +222,7 @@ angular.module('myApp')
                     var modalInstance = $modal.open({
                         animation: true,
                         templateUrl: 'views/directives/modal_faltantes.html',
-                        controller: 'FaltantesController'
+                        controller: 'FaltantesBancoController'
                     });
                 };
 
@@ -245,7 +239,7 @@ angular.module('myApp')
             }]);
 
 angular.module('myApp')
-        .controller('FaltantesController', ['$scope', '$modal', '$modalInstance', 'ConsultaService', 'sharedProperties',
+        .controller('FaltantesBancoController', ['$scope', '$modal', '$modalInstance', 'ConsultaService', 'sharedProperties',
             function ($scope, $modal, $modalInstance, ConsultaService, sharedProperties) {
                 $scope.modalform = {};
                 $scope.faltanteslist = [];
@@ -256,7 +250,7 @@ angular.module('myApp')
 
                 $scope.listar_faltantes = function () {
                     var cat = sharedProperties.getObject();
-                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + cat.idLote + "&status=1", null)
+                    ConsultaService.listRestAngular("lista_lote_valijas_banco.action?idLote=" + cat.idLote + "&status=3", null)
                             .then(function (result) {
                                 console.log("faltantes");
                                 console.log(result);

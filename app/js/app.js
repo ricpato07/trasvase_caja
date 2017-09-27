@@ -63,4 +63,9 @@ angular.module('myApp', [
                     templateUrl: 'views/panel/logisticainterna.html',
                     controller: 'LogisticainternaController'
                 })
+                 .state('logistica_externa', {
+                    url: '/logistica_externa',
+                    templateUrl: 'views/panel/logisticaexterna.html',
+                    controller: 'LogisticaexternaController'
+                })
         }]);
