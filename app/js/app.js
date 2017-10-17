@@ -68,4 +68,9 @@ angular.module('myApp', [
                     templateUrl: 'views/panel/logisticaexterna.html',
                     controller: 'LogisticaexternaController'
                 })
+                .state('retorno_valijas', {
+                    url: '/retorno_valijas',
+                    templateUrl: 'views/panel/retornovalijas.html',
+                    controller: 'RetornovalijaController'
+                })
         }]);
