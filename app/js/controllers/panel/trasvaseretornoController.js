@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('myApp')
-        .controller('TrasvasecajaController', ['$scope', '$timeout', '$modal', '$rootScope', '$stateParams', 'ValidaService', 'ConsultaService', 'MessageService', 'sharedProperties',
+        .controller('TrasvaseretornoController', ['$scope', '$timeout', '$modal', '$rootScope', '$stateParams', 'ValidaService', 'ConsultaService', 'MessageService', 'sharedProperties',
             function ($scope, $timeout, $modal, $rootScope, $stateParams, ValidaService, ConsultaService, MessageService, sharedProperties) {
                 $scope.forma = {};
                 $scope.cat = {};
@@ -9,11 +9,11 @@ angular.module('myApp')
                 $scope.deta = {};
                 $scope.bhabilita_cerrar = false;
                 $scope.caja_pattern = ValidaService.caja_pattern();
-                $scope.expediente_pattern = ValidaService.expediente_pattern();
+                $scope.expediente_documento_pattern = ValidaService.expediente_documento_pattern();
 
 
                 $scope.get_operatorias = function () {
-                    ConsultaService.listRestAngular("operatorias.action", null)
+                    ConsultaService.listRestAngular("operatorias_retorno.action", null)
                             .then(function (result) {
                                 console.log(result);
                                 $scope.operatoriaslist = result;
@@ -26,25 +26,20 @@ angular.module('myApp')
 
 
                 $scope.guardar_cab = function () {
-                    console.log($scope.cat.cajaId);
-                    if ($scope.cat.cajaId == undefined) {
-                        $scope.forma.form.caja.$setValidity('required', false);
+                    console.log($scope.cat.subTipoTrasvase);
+                    if ($scope.cat.subTipoTrasvase == undefined) {
+                         $scope.forma.form.control.$setValidity('required', false);
                         return;
                     }
 
-                    ConsultaService.getRestAngular("valida_caja.action?cajaId=" + $scope.cat.cajaId.substring(1))
+//                    $scope.habilitainput("caja");
+//                    $scope.limpiar_error();
+
+                    ConsultaService.getRestAngular("valida_caja_retorno.action?cajaId=" + $scope.cat.cajaId.substring(1))
                             .then(function (result) {
                                 console.log(result);
                                 console.log(result.status);
-                                /*
-                                 private Long idtrasvase;
-                                 private String usuario;
-                                 private Date fechaRegistro;
-                                 private int cajaId;
-                                 private String precinto;
-                                 private int status;
-                                 private String precinto2;
-                                 * */
+
                                 if (result.status == null || result.status == undefined) {
                                     var params = {
                                         idtrasvase: null,
@@ -53,14 +48,16 @@ angular.module('myApp')
                                         cajaId: Number($scope.cat.cajaId.substring(1)),
                                         precinto: null,
                                         status: 0,
-                                        precinto2: null
+                                        precinto2: null,
+                                        tipoTrasvase: null,
+                                        subTipoTrasvase: $scope.cat.subTipoTrasvase
                                     };
-                                    ConsultaService.setRestAngular("trasvasecajacab.action", params)
+                                    ConsultaService.setRestAngular("trasvasecajacab_retorno.action", params)
                                             .then(function (result2) {
                                                 console.log(result2);
                                                 $scope.cat.idtrasvase = result2.idtrasvase;
                                                 sharedProperties.setObject($scope.cat);
-                                                $scope.habilitainput("operatoria");
+                                                $scope.habilitainput("caja");
                                                 $scope.limpiar_error();
                                             })
                                             .catch(function (error2) {
@@ -70,8 +67,9 @@ angular.module('myApp')
                                             });
                                 } else {
                                     $scope.cat.idtrasvase = result.trasvase.idtrasvase;
+                                    $scope.cat.subTipoTrasvase = result.trasvase.subTipoTrasvase;
                                     sharedProperties.setObject($scope.cat);
-                                    $scope.habilitainput("operatoria");
+                                    $scope.habilitainput("caja");
                                     $scope.listar_etiquetas();
                                     $scope.limpiar_error();
                                 }
@@ -81,6 +79,7 @@ angular.module('myApp')
                                 $scope.forma.form.caja.$setValidity('error_caja', false);
                                 $scope.error.error_caja = error.data.men;
                             });
+
                 };
 
                 $scope.guardar_deta = function () {
@@ -90,34 +89,28 @@ angular.module('myApp')
                         return;
                     }
 
-                    /*
-                     *private long idtrasvase;
-                     private long etiqueta;
-                     private int idoperatoria;
-                     private Long scltcod;
-                     private int status;
-                     private Date fechaRegistro;
-                     private String usuario;
-                     private String tipoEtiqueta;
-                     * */
-
-                    ConsultaService.getRestAngular("valida_expediente.action?nunicodoc=" + $scope.cat.etiqueta.substring(1))
+                    ConsultaService.getRestAngular("valida_expediente_documento_retorno.action?etiqueta=" + $scope.cat.etiqueta + "&control=" + $scope.cat.subTipoTrasvase)
                             .then(function (result) {
                                 console.log(result);
-
+                                var idoperatoria;
+                                if ($scope.cat.subTipoTrasvase === 'ING' || $scope.cat.subTipoTrasvase === 'INT') {
+                                    idoperatoria = $scope.cat.idoperatoria;
+                                } else {
+                                    idoperatoria = result.idoperatoria;
+                                }
                                 var params = {
                                     pk: {
                                         idtrasvase: $scope.cat.idtrasvase,
                                         etiqueta: Number($scope.cat.etiqueta.substring(1))
                                     },
-                                    idoperatoria: $scope.cat.idoperatoria,
+                                    idoperatoria: idoperatoria,
                                     scltcod: null,
                                     status: null,
                                     fechaRegistro: null,
                                     usuario: null,
-                                    tipoEtiqueta: "U"
+                                    tipoEtiqueta: $scope.cat.etiqueta.substring(0, 1)
                                 };
-                                ConsultaService.setRestAngular("trasvasecajadeta.action", params)
+                                ConsultaService.setRestAngular("trasvasecajadeta_retorno.action", params)
                                         .then(function (result2) {
                                             console.log(result2);
                                             $scope.cat.etiqueta = undefined;
@@ -142,10 +135,13 @@ angular.module('myApp')
                 };
 
                 $scope.listar_etiquetas = function () {
-                    ConsultaService.listRestAngular("trasvasecajadeta.action?idtrasvase=" + $scope.cat.idtrasvase, null)
+                    ConsultaService.listRestAngular("trasvasecajadeta_retorno.action?idtrasvase=" + $scope.cat.idtrasvase, null)
                             .then(function (result) {
                                 console.log(result);
                                 $scope.etiquetaslist = result;
+                                if ($scope.etiquetaslist.length > 0) {
+                                    $scope.bcontrol = false;
+                                }
                             })
                             .catch(function (error) {
                                 console.log(error);
@@ -165,15 +161,29 @@ angular.module('myApp')
                 };
 
 
+                $scope.$watch('cat.subTipoTrasvase', function (newValue, oldValue) {
+
+                    if ($scope.forma.form !== undefined) {
+                        if (newValue != undefined && newValue != "") {
+                            $scope.habilitainput("control");
+                            $scope.forma.form.control.$setValidity('required', true);
+                            $scope.cat.idoperatoria = undefined;
+                        } else {
+                            $scope.boperatoria = false;
+                        }
+                    }
+                });
+
                 $scope.$watch('cat.idoperatoria', function (newValue, oldValue) {
 
                     if ($scope.forma.form !== undefined) {
                         if (newValue != undefined && newValue != "") {
-                            $scope.habilitainput("etiqueta");
+                            $scope.habilitainput("operatoria");
                             $scope.forma.form.operatoria.$setValidity('required', true);
+                            $scope.betiqueta = true;
                         } else {
-                            if ($scope.cat.cajaId != undefined) {
-                                $scope.habilitainput("operatoria");
+                            if ($scope.cat.subTipoTrasvase != undefined) {
+                                $scope.habilitainput("caja");
                                 $scope.forma.form.operatoria.$setValidity('required', false);
                             }
                         }
@@ -185,15 +195,18 @@ angular.module('myApp')
                     $scope.forma.form.$error = {};
                     $scope.forma.form.caja.$error = {};
                     $scope.forma.form.etiqueta.$error = {};
+                    $scope.forma.form.control.$error = {};
                     $scope.forma.form.caja.$invalid = false;
                     $scope.forma.form.etiqueta.$invalid = false;
+                    $scope.forma.form.control.$invalid = false;
                 };
 
                 $scope.limpiar = function () {
-                    $scope.habilitainput("caja");
+                    $scope.habilitainput("control");
                     $scope.cat = {};
                     $scope.etiquetaslist = [];
                     $scope.limpiar_error();
+                    $scope.boperatoria = false;
                     $("#etiqueta").val(null);
                     $("#caja").val(null);
                     $("#operatoria").val("");
@@ -204,45 +217,47 @@ angular.module('myApp')
                     $scope.bcaja = false;
                     $scope.boperatoria = false;
                     $scope.betiqueta = false;
+                    $scope.bcontrol = false;
+                    $scope.bhabilitaoperatoria = false;
                     switch (opcion) {
-                        case "caja":
+                        case "control":
+                            console.log("control");
+                            $scope.bcontrol = true;
                             $scope.bcaja = true;
+                            if ($scope.cat.subTipoTrasvase === 'ING' || $scope.cat.subTipoTrasvase === 'INT') {
+                                $scope.boperatoria = true;
+                            }
+                            break;
+                        case "caja":
+                            console.log("caja");
+                            if ($scope.cat.subTipoTrasvase === 'ING' || $scope.cat.subTipoTrasvase === 'INT') {
+                                $scope.boperatoria = true;
+                                $scope.bhabilitaoperatoria = true;
+                            } else {
+                                $scope.betiqueta = true;
+                            }
                             break;
                         case "operatoria":
+                            console.log("operatoria");
                             $scope.boperatoria = true;
-                            break;
-                        case "etiqueta":
-                            $scope.boperatoria = true;
+                            $scope.bhabilitaoperatoria = true;
                             $scope.betiqueta = true;
                             break;
                     }
                 };
 
-                $scope.habilitainput("caja");
+                $scope.habilitainput("control");
 
                 $scope.cerrar_caja = function () {
                     $scope.openmodal();
                 };
 
 
-                $scope.quitar_item = function (etiqueta) {
-                    var res = window.confirm("¿En verdad deseas borrar el expediente U0" + etiqueta + "?");
-                    if (res == true) {
-                        ConsultaService.getRestAngular("deltrasvasecajadeta.action?idtrasvase=" + $scope.cat.idtrasvase + "&etiqueta=" + etiqueta)
-                                .then(function (result) {
-                                    $scope.listar_etiquetas();
-                                })
-                                .catch(function (error) {
-                                    console.log(error);
-                                });
-                    }
-                };
-
                 $scope.openmodal = function () {
                     var modalInstance = $modal.open({
                         animation: true,
-                        templateUrl: 'views/directives/modal_precinto.html',
-                        controller: 'ModalController'
+                        templateUrl: 'views/directives/modal_precinto_retorno.html',
+                        controller: 'ModalRetornoController'
                     });
                 };
 
@@ -287,8 +302,8 @@ angular.module('myApp')
         ;
 
 angular.module('myApp')
-        .controller('ModalController', ['$scope', '$modal', '$modalInstance', '$rootScope', 'ValidaService', 'sharedProperties', 'ConsultaService',
-            function ($scope, $modal, $modalInstance, $rootScope, ValidaService, sharedProperties, ConsultaService) {
+        .controller('ModalRetornoController', ['$scope', '$modal', '$modalInstance', '$rootScope', 'ValidaService', 'sharedProperties',
+            function ($scope, $modal, $modalInstance, $rootScope, ValidaService, sharedProperties) {
                 $scope.modalform = {};
                 $scope.catform = {};
                 $scope.precinto_pattern = ValidaService.precinto_pattern();
@@ -339,4 +354,3 @@ angular.module('myApp')
                 });
 
             }]);
-

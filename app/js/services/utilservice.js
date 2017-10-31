@@ -72,35 +72,6 @@ angular.module('myApp')
                         }
                         return tmpElemento;
                     },
-                    //Métodos que muestra un pdf generado en el back
-                    //response: Blob del pdf generado en el back
-                    //nombre_archivo: nombre del pdf
-                    muestra_pdf: function (response, nombre_archivo) {
-                        $timeout(function () {
-                            var nav = navigator.userAgent.toLowerCase();
-                            if (nav.indexOf("msie") != -1) {
-                                window.navigator.msSaveOrOpenBlob(response, nombre_archivo + ".pdf");
-                            } else if (nav.indexOf("chrome") != -1 || nav.indexOf("firefox") != -1 || nav.indexOf("safari") != -1) {
-                                var url = (window.URL || window.webkitURL).createObjectURL(response);
-                                var anchor = document.createElement("a");
-                                anchor.setAttribute('download', nombre_archivo + ".pdf");
-                                anchor.setAttribute('href', url);
-                                document.body.appendChild(anchor);
-                                anchor.click();
-                                setTimeout(function () {
-                                    document.body.removeChild(anchor);
-                                    window.URL.revokeObjectURL(url);
-                                }, 100);
-                            } else if (nav.indexOf("opera") != -1) {
-                                var url = (window.URL || window.webkitURL).createObjectURL(response);
-                                window.open(url, '_blank');
-                            } else if (nav.indexOf("rident") != -1) {
-                                window.navigator.msSaveOrOpenBlob(response, nombre_archivo + ".pdf");
-                            } else {
-                                alert("Desconozco el navegador del que me visitas");
-                            }
-                        });
-                    },
                     preventDefault: function (e) {
                         e = e || window.event;
                         if (e.preventDefault)

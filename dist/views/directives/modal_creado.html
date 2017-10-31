@@ -1,0 +1,45 @@
+<div ng-form="modalform.form">
+    <div style='text-align:right; width: 600px;' class='modal-header'>
+        <button class='btn btn-primary' ng-click='close()'> X</button>
+    </div>
+    <div class='modal-body' style='width: 600px;height: 200px;'>
+        <h4>{{modal.mensaje}}</h4>
+        <div style="margin-top: 20px;">
+            <button type="button"
+                    ng-click="descargar_remito()"
+                    ng-disabled="bdescargado"
+                    class="btn btn-default">
+                Descargar recibo
+            </button>
+            <button type="button"
+                    style="margin-left: 10px;"
+                    ng-click="descargar_excel('tabla-valijas')"
+                    ng-disabled="bexcel"
+                    class="btn btn-default">
+                Descargar Excel
+            </button>
+        </div>
+        <table class="table" id="tabla-valijas" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Valija</th>
+                    <th>Precinto</th>
+                    <th>Id Sucursal</th>
+                    <th>Sucursal</th>
+                    <th>Plaza</th>                                  
+                    <th>Situación</th>                                  
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in valijas_leidas">                                        
+                    <td>{{item.pk.svalija}}</td>
+                    <td>{{item.precinto}}</td>
+                    <td>{{item.idSucursal}}</td>
+                    <td>{{item.sucursal}}</td>
+                    <td>{{item.plaza}}</td>
+                    <td>{{item.status==status_leidas?'Recibida':'Faltante'}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

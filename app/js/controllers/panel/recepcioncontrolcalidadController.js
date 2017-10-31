@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('myApp')
-        .controller('LogisticaexternaController', ['$scope', '$timeout', '$modal', '$rootScope', '$stateParams', 'ValidaService', 'ConsultaService', 'MessageService', 'sharedProperties',
+        .controller('RecepcioncontrolcalidadController', ['$scope', '$timeout', '$modal', '$rootScope', '$stateParams', 'ValidaService', 'ConsultaService', 'MessageService', 'sharedProperties',
             function ($scope, $timeout, $modal, $rootScope, $stateParams, ValidaService, ConsultaService, MessageService, sharedProperties) {
                 $scope.forma = {};
                 $scope.cat = {};
@@ -11,8 +11,8 @@ angular.module('myApp')
                 $scope.deta = {};
                 $scope.valijaslist = [];
                 $scope.bhabilita_guardar = false;
-                $scope.bhabilita_parcial = false;
                 $scope.bhabilita_faltantes = false;
+                $scope.bhabilita_rechazo = false;
                 $scope.numerico_pattern = ValidaService.numerico_pattern();
                 $scope.valija_pattern = ValidaService.valija_pattern();
                 $scope.precinto_pattern = ValidaService.precinto_pattern();
@@ -25,7 +25,7 @@ angular.module('myApp')
                         return;
                     }
 
-                    ConsultaService.getRestAngular("valida_lote_banco.action?idLote=" + $scope.cat.idLote)
+                    ConsultaService.getRestAngular("valida_lote_control.action?idLote=" + $scope.cat.idLote)
                             .then(function (result) {
                                 console.log("lote");
                                 console.log(result);
@@ -37,6 +37,7 @@ angular.module('myApp')
                                 $scope.forma.form.lote.$invalid = false;
                                 $scope.forma.form.lote.$error = {};
                                 $scope.forma.form.persona_entrega.$touched = true;
+                                $scope.bhabilita_rechazo = true;
                             })
                             .catch(function (error) {
                                 console.log(error);
@@ -44,6 +45,12 @@ angular.module('myApp')
                                 $scope.error.error_lote = error.data.men;
                             });
 
+                };
+
+                $scope.valija_action = function () {
+                    if ($scope.valija.svalija !== undefined) {
+                        $("#precinto").focus();
+                    }
                 };
 
                 $scope.get_usuario = function () {
@@ -56,12 +63,6 @@ angular.module('myApp')
                             .catch(function (error) {
                                 console.log(error);
                             });
-                };
-
-                $scope.valija_action = function () {
-                    if ($scope.valija.svalija !== undefined) {
-                        $("#precinto").focus();
-                    }
                 };
 
                 $scope.validar_valija = function () {
@@ -93,9 +94,9 @@ angular.module('myApp')
                         precinto: $scope.valija.precinto,
                         fecha: null,
                         usuario: null,
-                        status: 6
+                        status: 4
                     };
-                    ConsultaService.setRestAngular("valida_lote_valijas_banco.action", params)
+                    ConsultaService.setRestAngular("valida_lote_valijas_control.action", params)
                             .then(function (result) {
                                 console.log(result);
                                 $scope.listar_valijas();
@@ -120,7 +121,7 @@ angular.module('myApp')
                 };
 
                 $scope.listar_valijas = function () {
-                    ConsultaService.listRestAngular("lista_lote_valijas_banco.action?idLote=" + $scope.cat.idLote + "&status=6", null)
+                    ConsultaService.listRestAngular("lista_lote_valijas_control.action?idLote=" + $scope.cat.idLote + "&status=3", null)
                             .then(function (result) {
                                 console.log("valijaslist");
                                 console.log(result);
@@ -153,7 +154,7 @@ angular.module('myApp')
                     $scope.forma.form.persona_entrega.$touched = false;
                     $scope.forma.form.persona_recibe.$touched = false;
                     $scope.bhabilita_faltantes = false;
-                    $scope.bhabilita_parcial = false;
+                    $scope.bhabilita_rechazo = false;
                 };
 
                 $scope.habilitainput = function (opcion) {
@@ -187,66 +188,12 @@ angular.module('myApp')
                     $scope.close_message();
                 };
 
-                $scope.guardar_parcial_restante2 = function () {
-                    console.log("guardar_parcial_restante2");
-                    $scope.limpiar();
-                    sharedProperties.setList($scope.valijas_leidas);
-                    $modal.open({
-                        animation: true,
-                        templateUrl: 'views/directives/modal_creado.html',
-                        controller: 'CreadoBancoController',
-                        backdrop: 'static',
-                        keyboard: false
-                    });
-                };
-
-                $scope.guardar_parcial_restante = function () {
-                    console.log("guardar_parcial_restante");
-                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + $scope.cat.idLote + "&status=4", null)
-                            .then(function (result) {
-                                console.log("valijaslist pendientes");
-                                console.log(result);
-                                $scope.valijas_leidas = $scope.valijas_leidas.concat(result);
-                                $scope.guardar_parcial_restante2();
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                                $scope.guardar_parcial_restante2();
-                            });
-                };
-
-                $scope.guardar_parcialmente = function () {
-                    if ($scope.cat.personaEntrega === undefined || $scope.cat.personaEntrega === null) {
-                        alert("Debes colocar el nombre de la persona que entrega");
-                        return;
-                    }
-                    if ($scope.cat.personaRecibe === undefined || $scope.cat.personaRecibe === null) {
-                        alert("Debes colocar el nombre de la persona que recibe");
-                        return;
-                    }
-
-                    var res = window.confirm("¿En verdad deseas cerrar parcialmente el lote?");
-                    if (res == true) {
-                        ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + $scope.cat.idLote + "&status=6", null)
-                                .then(function (result) {
-                                    console.log("valijaslist leidas");
-                                    console.log(result);
-                                    $scope.valijas_leidas = result;
-                                    $scope.guardar_parcial_restante();
-                                })
-                                .catch(function (error) {
-                                    $scope.valijas_leidas = [];
-                                    $scope.guardar_parcial_restante();
-                                    console.log(error);
-                                });
-                    }
-                };
 
                 $scope.guardar_restante = function () {
                     $modal.open({
                         animation: true,
                         templateUrl: 'views/directives/modal_creado.html',
-                        controller: 'CreadoBancoController',
+                        controller: 'CreadoControlController',
                         backdrop: 'static',
                         keyboard: false
                     });
@@ -275,16 +222,17 @@ angular.module('myApp')
                             personaRecibe: $scope.cat.personaRecibe
                         };
 
-                        ConsultaService.setRestAngular("save_lote_logistica_banco.action", params)
+                        ConsultaService.setRestAngular("save_lote_logistica_control.action", params)
                                 .then(function (result) {
                                     console.log(result);
                                     $scope.limpiar_error();
                                     $scope.limpiar();
-                                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + idlote + "&status=6", null)
+                                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + idlote + "&status=3", null)
                                             .then(function (result) {
                                                 console.log("valijaslist leidas");
                                                 console.log(result);
-                                                sharedProperties.setList(result);
+                                                $scope.valijas_leidas = result;
+                                                sharedProperties.setList($scope.valijas_leidas);
                                                 $scope.guardar_restante();
                                             })
                                             .catch(function (error) {
@@ -294,7 +242,7 @@ angular.module('myApp')
                                 })
                                 .catch(function (error) {
                                     console.log(error);
-                                    $scope.guardar_restante();
+                                    MessageService.error($scope, error.data.men);
                                 });
                     }
                 };
@@ -303,7 +251,7 @@ angular.module('myApp')
                     var modalInstance = $modal.open({
                         animation: true,
                         templateUrl: 'views/directives/modal_faltantes.html',
-                        controller: 'FaltantesBancoController',
+                        controller: 'FaltantesControlController',
                         backdrop: 'static',
                         keyboard: false
                     });
@@ -314,18 +262,32 @@ angular.module('myApp')
                         if (newValue != undefined) {
                             if (newValue.length > 0) {
                                 $scope.bhabilita_guardar = newValue.length == $scope.cat.totalValijas;
-                                $scope.bhabilita_parcial = newValue.length < $scope.cat.totalValijas;
                             }
                         }
                     }
                 });
 
+                $scope.rechazar_lote = function () {
+                    $modal.open({
+                        animation: true,
+                        templateUrl: 'views/directives/modal_rechazo.html',
+                        controller: 'RechazarController',
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                };
+                
+                $rootScope.$on("Limpiar", function () {
+                    $scope.limpiar();
+                });
+
             }]);
 
 angular.module('myApp')
-        .controller('FaltantesBancoController', ['$scope', '$modal', '$modalInstance', 'ConsultaService', 'sharedProperties','UtilService',
+        .controller('FaltantesControlController', ['$scope', '$modal', '$modalInstance', 'ConsultaService', 'sharedProperties', 'UtilService',
             function ($scope, $modal, $modalInstance, ConsultaService, sharedProperties, UtilService) {
                 $scope.modalform = {};
+                $scope.modal = {};
                 $scope.faltanteslist = [];
 
                 $scope.close = function () {
@@ -334,7 +296,7 @@ angular.module('myApp')
 
                 $scope.listar_faltantes = function () {
                     var cat = sharedProperties.getObject();
-                    ConsultaService.listRestAngular("lista_lote_valijas_banco.action?idLote=" + cat.idLote + "&status=4", null)
+                    ConsultaService.listRestAngular("lista_lote_valijas_control.action?idLote=" + cat.idLote + "&status=2", null)
                             .then(function (result) {
                                 console.log("faltantes");
                                 console.log(result);
@@ -356,14 +318,111 @@ angular.module('myApp')
                 };
 
             }]);
+
 angular.module('myApp')
-        .controller('CreadoBancoController', ['$scope', '$modal', '$timeout', '$modalInstance', 'ConsultaService', 'sharedProperties', 'UtilService',
+        .controller('RechazarController', ['$scope', '$modal','$rootScope', '$modalInstance', 'ConsultaService', 'sharedProperties',
+            function ($scope, $modal,$rootScope, $modalInstance, ConsultaService, sharedProperties) {
+                $scope.modalform = {};
+                $scope.modal = {};
+                $scope.valijas_leidas = [];
+                $scope.status_leidas = 3;
+                $scope.bvalijastodas = true;
+                var cat = sharedProperties.getObject();
+
+                $scope.close = function () {
+                    $modalInstance.close();
+                };
+
+                $scope.listar_valijas_pendientes = function () {
+
+                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + cat.idLote + "&status=2", null)
+                            .then(function (result) {
+                                console.log("valijaslist pendientes");
+                                console.log(result);
+                                $scope.valijas_leidas.concat(result);
+                                sharedProperties.setList($scope.valijas_leidas);
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                };
+
+                $scope.listar_valijas_leidas = function () {
+                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + cat.idLote + "&status=3", null)
+                            .then(function (result) {
+                                console.log("valijaslist leidas");
+                                console.log(result);
+                                $scope.valijas_leidas = result;
+                                $scope.listar_valijas_pendientes();
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                };
+
+                $scope.rechazar_restante2 = function () {
+                    console.log("rechazar_restante2");
+                    $scope.close();
+                    sharedProperties.setList($scope.valijas_leidas);
+                    $modal.open({
+                        animation: true,
+                        templateUrl: 'views/directives/modal_creado.html',
+                        controller: 'CreadoControlController',
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                };
+
+                $scope.rechazar_restante = function () {
+                    console.log("rechazar_restante");
+                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + cat.idLote + "&status=2", null)
+                            .then(function (result) {
+                                console.log("valijaslist pendientes");
+                                console.log(result);
+                                $scope.valijas_leidas = $scope.valijas_leidas.concat(result);
+                                $scope.rechazar_restante2();
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                                $scope.rechazar_restante2();
+                            });
+                };
+
+                $scope.rechazar = function () {
+                    console.log("rechazar");
+                    $rootScope.$emit("Limpiar", {});
+                    ConsultaService.getRestAngular("rechazar_lote_control.action?idLote=" + cat.idLote + "&observaciones=" + $scope.modal.observaciones, null)
+                            .then(function (result) {
+                                console.log(result);
+
+                                ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + cat.idLote + "&status=3", null)
+                                        .then(function (result) {
+                                            console.log("valijaslist leidas");
+                                            console.log(result);
+                                            $scope.valijas_leidas = result;
+                                            $scope.rechazar_restante();
+                                        })
+                                        .catch(function (error) {
+                                            $scope.valijas_leidas = [];
+                                            $scope.rechazar_restante();
+                                            console.log(error);
+                                        });
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                };
+
+
+            }]);
+angular.module('myApp')
+        .controller('CreadoControlController', ['$scope', '$modal', '$timeout', '$modalInstance', 'ConsultaService', 'sharedProperties', 'UtilService',
             function ($scope, $modal, $timeout, $modalInstance, ConsultaService, sharedProperties, UtilService) {
                 $scope.modalform = {};
                 $scope.modal = {};
                 $scope.bdescargado = false;
                 $scope.bexcel = false;
-                $scope.status_leidas = 6;
+                $scope.status_leidas = 3;
                 var cat = sharedProperties.getObject();
                 $scope.valijas_leidas = sharedProperties.getList();
                 console.log("$scope.valijas_leidas");
@@ -380,7 +439,7 @@ angular.module('myApp')
 
                 $scope.descargar_remito = function () {
                     $scope.bdescargado = true;
-                    ConsultaService.getBlobRestAngular("remito_logistica_banco.action?idLote=" + cat.idLote + "&status=6")
+                    ConsultaService.getBlobRestAngular("remito_control_calidad.action?idLote=" + cat.idLote + "&status=3")
                             .then(function (response) {
                                 console.log(response);
                                 ConsultaService.showBlob(response, "remito_lote_" + cat.idLote + '.pdf');
@@ -400,4 +459,4 @@ angular.module('myApp')
                 };
 
             }]);
-
+        

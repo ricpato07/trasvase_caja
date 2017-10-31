@@ -1,5 +1,4 @@
 <div class="fondogris">
-    <div bind-html-compile="message.html"></div>
     <section class="content">
         <div ng-form="forma.form">
             <div class="box box-primary">
@@ -33,7 +32,7 @@
                                 <input type="text"
                                        class="form-control"
                                        id="persona_entrega" name="persona_entrega"
-                                       ng-model="cat.personaBancoEntrega"
+                                       ng-model="cat.personaEntrega"
                                        ng-maxlength="200"
                                        maxlength="200"
                                        ng-disabled="!bvalija"
@@ -49,7 +48,7 @@
                                 <input type="text"
                                        class="form-control"
                                        id="persona_recibe" name="persona_recibe"
-                                       ng-model="cat.personaBancoRecibe"
+                                       ng-model="cat.personaRecibe"
                                        ng-maxlength="200"
                                        maxlength="200"
                                        ng-disabled="!bvalija"
@@ -74,6 +73,7 @@
                                        ng-disabled="!bvalija"
                                        placeholder="G############"
                                        ng-pattern="valija_pattern"
+                                       ng-keyup="$event.keyCode == 13 ? valija_action() : null"
                                 >
                                 <span class="mensaje-form" ng-show="forma.form.valija.$error.pattern">* El formato de la valija es incorrecto<br/></span>
                                 <span class="mensaje-form" ng-show="forma.form.valija.$error.error_valija">{{error.error_valija}}<br/></span>
@@ -109,6 +109,13 @@
                             </button>
                             <button type="button"
                                     style="margin-left: 10px;"
+                                    ng-click="guardar_parcialmente()"
+                                    ng-disabled="!(bhabilita_parcial && forma.form.$valid)"
+                                    class="btn btn-default">
+                                Cerrar parcialmente
+                            </button>
+                            <button type="button"
+                                    style="margin-left: 10px;"
                                     ng-click="ver_faltantes()"
                                     ng-disabled="!bhabilita_faltantes"
                                     class="btn btn-default">
@@ -134,7 +141,7 @@
                             <div class="col-md-12" style="height: 400px;">
                                 <div ng-repeat="item in valijaslist">
                                     <p class="item">
-                                        <span class="item_list_round"><strong>{{item.pk.svalija}}</strong> | {{item.precinto}}</span>
+                                        <span class="item_list_round"><strong>{{item.pk.svalija}}</strong> | {{item.precinto}} | {{item.sucursal}}, {{item.plaza}} </span>
                                     </p>
                                 </div>
                             </div>

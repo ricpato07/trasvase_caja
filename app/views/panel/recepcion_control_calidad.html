@@ -21,7 +21,7 @@
                                        ng-pattern="numerico_pattern"
                                        ng-keyup="$event.keyCode == 13 ? validar_lote() : null"
                                        required="true"
-                                       >
+                                >
                                 <span class="mensaje-form" ng-show="forma.form.lote.$error.pattern">* El formato del lote es incorrecto<br/></span>
                                 <span class="mensaje-form" ng-show="forma.form.lote.$error.error_lote">{{error.error_lote}}<br/></span>
                             </div>
@@ -37,7 +37,7 @@
                                        maxlength="200"
                                        ng-disabled="!bvalija"
                                        required ="true"
-                                       >
+                                >
                                 <span class="mensaje-form" ng-show="forma.form.persona_entrega.$invalid && forma.form.persona_entrega.$touched">
                                     Es necesario colocar la persona que entrega<br/></span>
                             </div>
@@ -53,7 +53,7 @@
                                        maxlength="200"
                                        ng-disabled="!bvalija"
                                        required ="true"
-                                       >
+                                >
                                 <span class="mensaje-form" ng-show="forma.form.persona_recibe.$invalid && forma.form.persona_recibe.$touched">
                                     Es necesario colocar la persona que recibe<br/></span>
                             </div>
@@ -74,7 +74,7 @@
                                        placeholder="G############"
                                        ng-pattern="valija_pattern"
                                        ng-keyup="$event.keyCode == 13 ? valija_action() : null"
-                                       >
+                                >
                                 <span class="mensaje-form" ng-show="forma.form.valija.$error.pattern">* El formato de la valija es incorrecto<br/></span>
                                 <span class="mensaje-form" ng-show="forma.form.valija.$error.error_valija">{{error.error_valija}}<br/></span>
                             </div>
@@ -93,7 +93,7 @@
                                        ng-disabled="!bvalija"
                                        ng-pattern="precinto_pattern"
                                        ng-keyup="$event.keyCode == 13 ? validar_valija() : null"
-                                       >
+                                >
                                 <span class="mensaje-form" ng-show="forma.form.precinto.$error.pattern">* El formato del precinto es incorrecto<br/></span>
                                 <span class="mensaje-form" ng-show="forma.form.precinto.$error.error_precinto">{{error.error_precinto}}<br/></span>
                             </div>
@@ -111,13 +111,20 @@
                                     style="margin-left: 10px;"
                                     ng-click="ver_faltantes()"
                                     ng-disabled="!bhabilita_faltantes"
-                                    class="btn btn-default">
+                                    class="btn btn-default pull-left">
                                 Ver faltantes
+                            </button>
+                            <button ng-click="rechazar_lote()"
+                                    style="margin-left: 10px;"
+                                    ng-disabled="!(bhabilita_rechazo)"
+                                    type="button"
+                                    class="btn btn btn-red pull-left">
+                                Rechazar lote
                             </button>
                             <button type="button"
                                     style="margin-left: 10px;"
                                     ng-click="limpiar()"
-                                    class="btn btn-default">
+                                    class="btn btn-default pull-left">
                                 Limpiar
                             </button>
                         </div>

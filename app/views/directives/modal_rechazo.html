@@ -1,0 +1,28 @@
+<div ng-form="modalform.form">
+    <div style='text-align:right; width: 600px;' class='modal-header'>
+        <button class='btn btn-primary' ng-click='close()'> X</button>
+    </div>
+    <div class='modal-body' style='width: 600px;height: 250px;'>
+        <div class='form-group' ng-class="{'has-error':modalform.form.observaciones.$invalid && modalform.form.observaciones.$touched}">
+            <label for='observaciones'>Observaciones *:</label>
+            <textarea id="observaciones" name="observaciones" 
+                      rows="2" 
+                      class="form-control" 
+                      ng-maxlength="200" 
+                      maxlength="200" 
+                      ng-model="modal.observaciones"
+                      required>
+            </textarea>
+        </div>
+
+        <div>
+            <button ng-click='rechazar()'
+                    type='button'
+                    ng-disabled="!modalform.form.$valid"
+                    class='btn btn btn-red'>
+                Rechazar lote
+            </button>
+
+        </div>
+    </div>
+</div>

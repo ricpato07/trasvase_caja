@@ -73,4 +73,14 @@ angular.module('myApp', [
                     templateUrl: 'views/panel/retornovalijas.html',
                     controller: 'RetornovalijaController'
                 })
+                .state('recepcion_control_calidad', {
+                    url: '/recepcion_control_calidad',
+                    templateUrl: 'views/panel/recepcion_control_calidad.html',
+                    controller: 'RecepcioncontrolcalidadController'
+                })
+                .state('trasvase_retornos', {
+                    url: '/trasvase_retornos',
+                    templateUrl: 'views/panel/trasvaseretornos.html',
+                    controller: 'TrasvaseretornoController'
+                })
         }]);

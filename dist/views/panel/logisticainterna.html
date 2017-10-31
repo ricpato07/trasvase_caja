@@ -1,5 +1,4 @@
 <div class="fondogris">
-    <div bind-html-compile="message.html"></div>
     <section class="content">
         <div ng-form="forma.form">
             <div class="box box-primary">
@@ -22,7 +21,7 @@
                                        ng-pattern="numerico_pattern"
                                        ng-keyup="$event.keyCode == 13 ? validar_lote() : null"
                                        required="true"
-                                >
+                                       >
                                 <span class="mensaje-form" ng-show="forma.form.lote.$error.pattern">* El formato del lote es incorrecto<br/></span>
                                 <span class="mensaje-form" ng-show="forma.form.lote.$error.error_lote">{{error.error_lote}}<br/></span>
                             </div>
@@ -38,7 +37,7 @@
                                        maxlength="200"
                                        ng-disabled="!bvalija"
                                        required ="true"
-                                >
+                                       >
                                 <span class="mensaje-form" ng-show="forma.form.persona_entrega.$invalid && forma.form.persona_entrega.$touched">
                                     Es necesario colocar la persona que entrega<br/></span>
                             </div>
@@ -54,7 +53,7 @@
                                        maxlength="200"
                                        ng-disabled="!bvalija"
                                        required ="true"
-                                >
+                                       >
                                 <span class="mensaje-form" ng-show="forma.form.persona_recibe.$invalid && forma.form.persona_recibe.$touched">
                                     Es necesario colocar la persona que recibe<br/></span>
                             </div>
@@ -74,7 +73,8 @@
                                        ng-disabled="!bvalija"
                                        placeholder="G############"
                                        ng-pattern="valija_pattern"
-                                >
+                                       ng-keyup="$event.keyCode == 13 ? valija_action() : null"
+                                       >
                                 <span class="mensaje-form" ng-show="forma.form.valija.$error.pattern">* El formato de la valija es incorrecto<br/></span>
                                 <span class="mensaje-form" ng-show="forma.form.valija.$error.error_valija">{{error.error_valija}}<br/></span>
                             </div>
@@ -93,7 +93,7 @@
                                        ng-disabled="!bvalija"
                                        ng-pattern="precinto_pattern"
                                        ng-keyup="$event.keyCode == 13 ? validar_valija() : null"
-                                >
+                                       >
                                 <span class="mensaje-form" ng-show="forma.form.precinto.$error.pattern">* El formato del precinto es incorrecto<br/></span>
                                 <span class="mensaje-form" ng-show="forma.form.precinto.$error.error_precinto">{{error.error_precinto}}<br/></span>
                             </div>
@@ -134,7 +134,7 @@
                             <div class="col-md-12" style="height: 400px;">
                                 <div ng-repeat="item in valijaslist">
                                     <p class="item">
-                                        <span class="item_list_round"><strong>{{item.pk.svalija}}</strong> | {{item.precinto}}</span>
+                                        <span class="item_list_round"><strong>{{item.pk.svalija}}</strong> | {{item.precinto}} | {{item.sucursal}}, {{item.plaza}}</span>
                                     </p>
                                 </div>
                             </div>

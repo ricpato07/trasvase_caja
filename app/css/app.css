@@ -102,3 +102,9 @@ html, body{
     float: left;
     margin-left: -1px;
 }
+
+.btn-red {
+    background-color: #DD5044;
+    border-color: #DD5044;
+    color: #fff;
+}

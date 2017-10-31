@@ -2,24 +2,55 @@
     <div style='text-align:right; width: 600px;' class='modal-header'>
         <button class='btn btn-primary' ng-click='close()'> X</button>
     </div>
-    <div class='modal-body' style='width: 600px;height: 500px;'>
-       <div class="box box-primary">
-                <div class="box-header with-border">
+    <div class='modal-body' style='width: 600px;height: 550px;'>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <div>
                     <h3 class="box-title">Valijas faltantes ({{faltanteslist.length}})</h3>
                 </div>
-                <div class="box-body">
-                    <div class="row">
-                        <div style="overflow-y: scroll;">
-                            <div class="col-md-12" style="height: 400px;">
-                                <div ng-repeat="item in faltanteslist">
-                                    <p class="item">
-                                        <span class="item_list_round"><strong>{{item.pk.svalija}}</strong></span>
-                                    </p>
-                                </div>
+                <button type="button"
+                        style="margin-top: 10px;"
+                        ng-click="exportar_faltantes('tabla-faltantes')"
+                        class="btn btn-default">
+                    Exportar faltantes
+                </button>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div style="overflow-y: scroll;">
+                        <div class="col-md-12" style="height: 400px;">
+                            <div ng-repeat="item in faltanteslist">
+                                <p class="item">
+                                    <span class="item_list_round"><strong>{{item.pk.svalija}}</strong> | {{item.sucursal}}, {{item.plaza}}</span>
+                                </p>
                             </div>
                         </div>
+                        <table class="table" id="tabla-faltantes" style="display: none">
+                            <thead>
+                                <tr>
+                                    <th>Valija</th>
+                                    <th>Precinto</th>
+                                    <th>Id Sucursal</th>
+                                    <th>Sucursal</th>
+                                    <th>Plaza</th>
+                                    <th>Situación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in faltanteslist">                                        
+                                    <td>{{item.pk.svalija}}</td>
+                                    <td>{{item.precinto}}</td>
+                                    <td>{{item.idSucursal}}</td>
+                                    <td>{{item.sucursal}}</td>
+                                    <td>{{item.plaza}}</td>
+                                    <td>Faltante</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </div>        
+            </div>
+
+        </div>        
     </div>
 </div>

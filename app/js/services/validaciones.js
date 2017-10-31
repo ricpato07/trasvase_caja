@@ -21,6 +21,8 @@ angular.module('myApp')
         var expediente_pattern = /^[U][0-9]{10}$/;
         var precinto_pattern = /^[C][V][0-9]{6}[ ][0-9]{6}$/;
         var valija_pattern = /^[G][0-9]{12}$/;
+        var documento_pattern = /^[T][0-9]{11}$/;
+        var expediente_documento_pattern = /^[T][0-9]{11}|[U][0-9]{10}$/;
 
         return {
             validamail: function (mail) {
@@ -174,6 +176,12 @@ angular.module('myApp')
             },
             valija_pattern: function () {
                 return valija_pattern;
+            },
+            documento_pattern: function () {
+                return documento_pattern;
+            },
+            expediente_documento_pattern: function () {
+                return expediente_documento_pattern;
             },
             formats_date: function () {
                 return formats;

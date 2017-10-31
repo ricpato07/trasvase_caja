@@ -57,9 +57,15 @@ angular.module('myApp')
                             });
                 };
 
+                $scope.valija_action = function () {
+                    if ($scope.valija.svalija !== undefined) {
+                        $("#precinto").focus();
+                    }
+                };
+
                 $scope.validar_valija = function () {
 
-                    if ($scope.valija.svalija === undefined || $scope.valija.svalija===null) {
+                    if ($scope.valija.svalija === undefined || $scope.valija.svalija === null) {
                         $scope.forma.form.valija.$setValidity('required', false);
                         return;
                     }
@@ -67,7 +73,7 @@ angular.module('myApp')
                         $scope.forma.form.precinto.$setValidity('required', false);
                         return;
                     }
-                                       
+
                     if ($scope.cat.personaEntrega === undefined || $scope.cat.personaEntrega === null) {
                         alert("Debes colocar el nombre de la persona que entrega");
                         return;
@@ -109,6 +115,7 @@ angular.module('myApp')
                     $scope.forma.form.precinto.$error = {};
                     $scope.forma.form.valija.$touched = false;
                     $scope.forma.form.precinto.$touched = false;
+                    $("#valija").focus();
                 };
 
                 $scope.listar_valijas = function () {
@@ -184,9 +191,32 @@ angular.module('myApp')
                     $scope.close_message();
                 };
 
+                $scope.listar_valijas_guardadas = function () {
+                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + $scope.cat.idLote + "&status=2", null)
+                            .then(function (result) {
+                                console.log("valijaslist guardadas");
+                                console.log(result);
+                                sharedProperties.setList(result);
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                };
+
+                $scope.guardar_restante = function () {
+                    $scope.limpiar_error();
+                    $scope.limpiar();
+                    $modal.open({
+                        animation: true,
+                        templateUrl: 'views/directives/modal_creado.html',
+                        controller: 'CreadoController',
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                };
 
                 $scope.guardar = function () {
-                    
+
                     if ($scope.cat.personaEntrega === undefined || $scope.cat.personaEntrega === null) {
                         alert("Debes colocar el nombre de la persona que entrega");
                         return;
@@ -195,7 +225,7 @@ angular.module('myApp')
                         alert("Debes colocar el nombre de la persona que recibe");
                         return;
                     }
-                    
+
                     var res = window.confirm("¿En verdad deseas cerrar el lote?");
                     if (res == true) {
                         var idlote = $scope.cat.idLote;
@@ -205,17 +235,26 @@ angular.module('myApp')
                             fecha: null,
                             usuario: null,
                             personaEntrega: $scope.cat.personaEntrega,
-                            personaRecibe: $scope.cat.personaRecibe,
-                            personaBancoEntrega: null,
-                            personaBancoRecibe: null
+                            personaRecibe: $scope.cat.personaRecibe
                         };
-                        
+
                         ConsultaService.setRestAngular("save_lote_logistica.action", params)
                                 .then(function (result) {
+                                    console.log("save_lote_logistica.action");
                                     console.log(result);
-                                    $scope.limpiar_error();
-                                    $scope.limpiar();
-                                    alert("El lote " + idlote + " se ha cerrado correctamente.");
+                                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + $scope.cat.idLote + "&status=2", null)
+                                            .then(function (result) {
+                                                console.log("valijaslist guardadas");
+                                                console.log(result);
+                                                sharedProperties.setList(result);
+                                                $scope.guardar_restante();
+                                            })
+                                            .catch(function (error) {
+                                                console.log(error);
+                                                $scope.bhabilita_faltantes = true;
+                                                $scope.guardar_restante();
+                                            });
+
                                 })
                                 .catch(function (error) {
                                     console.log(error);
@@ -224,11 +263,23 @@ angular.module('myApp')
                     }
                 };
 
+                $scope.ver_modal = function () {
+                    $modal.open({
+                        animation: true,
+                        templateUrl: 'views/directives/modal_creado.html',
+                        controller: 'CreadoController',
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                };
+
                 $scope.ver_faltantes = function () {
-                    var modalInstance = $modal.open({
+                    $modal.open({
                         animation: true,
                         templateUrl: 'views/directives/modal_faltantes.html',
-                        controller: 'FaltantesController'
+                        controller: 'FaltantesController',
+                        backdrop: 'static',
+                        keyboard: false
                     });
                 };
 
@@ -245,17 +296,19 @@ angular.module('myApp')
             }]);
 
 angular.module('myApp')
-        .controller('FaltantesController', ['$scope', '$modal', '$modalInstance', 'ConsultaService', 'sharedProperties',
-            function ($scope, $modal, $modalInstance, ConsultaService, sharedProperties) {
+        .controller('FaltantesController', ['$scope', '$modal', '$timeout', '$modalInstance', 'ConsultaService', 'sharedProperties', 'UtilService',
+            function ($scope, $modal, $timeout, $modalInstance, ConsultaService, sharedProperties, UtilService) {
                 $scope.modalform = {};
                 $scope.faltanteslist = [];
+                var cat = sharedProperties.getObject();
+                //var objeto = {precinto: 'CV147352 145004', idSucursal: 1225, sucursal: "LA PAZ", plaza: "Interior", pk: {svalija: 'G000000135449'}};
+                //$scope.faltanteslist.push(objeto);
 
                 $scope.close = function () {
                     $modalInstance.close();
                 };
 
                 $scope.listar_faltantes = function () {
-                    var cat = sharedProperties.getObject();
                     ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + cat.idLote + "&status=1", null)
                             .then(function (result) {
                                 console.log("faltantes");
@@ -265,7 +318,65 @@ angular.module('myApp')
                             .catch(function (error) {
                                 console.log(error);
                             });
+
                 };
                 $scope.listar_faltantes();
+
+                $scope.exportar_faltantes = function (tableId) {
+                    var exportHref = UtilService.tableToExcel(tableId, 'valijas faltantes');
+                    if (exportHref !== null) {
+                        $timeout(function () {
+                            location.href = exportHref;
+                        }, 100); // trigger download
+                    }
+                };
+
+
+            }]);
+
+angular.module('myApp')
+        .controller('CreadoController', ['$scope', '$modal', '$timeout', '$modalInstance', 'ConsultaService', 'sharedProperties', 'UtilService',
+            function ($scope, $modal, $timeout, $modalInstance, ConsultaService, sharedProperties, UtilService) {
+                $scope.modalform = {};
+                $scope.modal = {};
+                $scope.bdescargado = false;
+                $scope.bexcel = false;
+                $scope.status_leidas = 2;
+                var cat = sharedProperties.getObject();
+                $scope.valijas_leidas = sharedProperties.getList();
+                console.log("$scope.valijas_leidas");
+                console.log($scope.valijas_leidas);
+
+
+                $scope.close = function () {
+                    $modalInstance.close();
+                };
+
+                $scope.show_message = function () {
+                    $scope.modal.mensaje = "El lote " + cat.idLote + " se ha cerrado correctamente.";
+
+                };
+                $scope.show_message();
+
+                $scope.descargar_remito = function () {
+                    $scope.bdescargado = true;
+                    ConsultaService.getBlobRestAngular("remito_logistica_adea.action?idLote=" + cat.idLote + "&status=2")
+                            .then(function (response) {
+                                console.log(response);
+                                ConsultaService.showBlob(response, "remito_lote_" + cat.idLote + '.pdf');
+                            })
+                            .catch(function (men) {
+                                console.log(men);
+                            });
+                };
+                $scope.descargar_excel = function (tableId) {
+                    $scope.bexcel = true;
+                    var exportHref = UtilService.tableToExcel(tableId, 'valijas recibidas');
+                    if (exportHref !== null) {
+                        $timeout(function () {
+                            location.href = exportHref;
+                        }, 100); // trigger download
+                    }
+                };
 
             }]);

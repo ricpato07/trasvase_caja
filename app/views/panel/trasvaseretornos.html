@@ -1,0 +1,114 @@
+<div class="fondogris">
+    <section class="content">
+        <div ng-form="forma.form">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Datos del trasvase</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-3 col-md-3">
+                            <div class="form-group" ng-class="{'has-error':forma.form.control.$invalid}">
+                                <label for="control">Control de retorno:</label>
+                                <select id="control" name="control"
+                                        class="form-control"
+                                        ng-model="cat.subTipoTrasvase"
+                                        ng-disabled="!bcaja">
+                                    <option value="">--Selecciona una opción--</option>
+                                    <option value="INT">Integraciones</option>
+                                    <option value="ING">Nuevo Ingreso</option>
+                                    <option value="RET">Retornos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3">
+                            <div class="form-group"
+                                 ng-class="{'has-error':forma.form.caja.$invalid && forma.form.caja.$touched}">
+                                <label for="caja">Caja:</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="caja" name="caja"
+                                       ng-model="cat.cajaId"
+                                       placeholder="S########"
+                                       ng-maxlength="9"
+                                       maxlength="9"
+                                       ng-disabled="!bcaja"
+                                       ng-pattern="caja_pattern"
+                                       ng-keyup="$event.keyCode == 13 ? guardar_cab() : null"
+                                       upper-case style="text-transform:uppercase;"
+                                >
+                                <span class="mensaje-form" ng-show="forma.form.caja.$error.pattern">* El formato de la caja es incorrecto<br/></span>
+                                <span class="mensaje-form" ng-show="forma.form.caja.$error.error_caja">{{error.error_caja}}<br/></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3" ng-if="boperatoria">
+                            <div class="form-group" ng-class="{'has-error':forma.form.operatoria.$invalid && forma.form.operatoria.$touched}">
+                                <label for="operatoria">Operatoria:</label>
+                                <select id="operatoria" name="operatoria"
+                                        class="form-control"
+                                        ng-model="cat.idoperatoria"
+                                        ng-disabled="!bhabilitaoperatoria">
+                                    <option value="">--Selecciona una operatoria--</option>
+                                    <option ng-repeat="option in operatoriaslist" value="{{option.idoperatoria}}">
+                                        {{option.descripcion}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3">
+                            <div class="form-group" ng-class="{'has-error':forma.form.etiqueta.$invalid && forma.form.etiqueta.$touched}">
+                                <label for="etiqueta">Etiqueta:</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="etiqueta" name="etiqueta"
+                                       ng-model="cat.etiqueta"
+                                       ng-maxlength="12"
+                                       maxlength="12"
+                                       ng-disabled="!betiqueta"
+                                       ng-pattern="expediente_documento_pattern"
+                                       ng-keyup="$event.keyCode == 13 ? guardar_deta() : null"
+                                >
+                                <span class="mensaje-form" ng-show="forma.form.etiqueta.$error.pattern">* El formato de la etiqueta es incorrecto<br/></span>
+                                <span class="mensaje-form" ng-show="forma.form.etiqueta.$error.error_etiqueta">{{error.error_etiqueta}}<br/></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 col-md-4">
+                            <button ng-click="cerrar_caja()"
+                                    type="button"
+                                    ng-disabled="!bhabilita_cerrar"
+                                    class="btn btn btn-primary pull-left">
+                                Cerrar caja
+                            </button>
+                            <button type="button"
+                                    style="margin-left: 10px;"
+                                    ng-click="limpiar()"
+                                    class="btn btn-default">
+                                Limpiar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Etiquetas leídas ({{etiquetaslist.length}})</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div style="overflow-y: scroll;">
+                            <div class="col-md-12" style="height: 400px;">
+                                <div ng-repeat="item in etiquetaslist">
+                                    <p class="item">
+                                        <span class="item_list_round"><strong>{{item.tipoEtiqueta=='U'?'U0':'T'}}{{item.pk.etiqueta}}</strong> | {{item.operatoria}}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
