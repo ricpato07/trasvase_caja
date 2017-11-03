@@ -100,7 +100,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-4 col-md-4">
+                        <div class="col-sm-12 col-md-12">
                             <button ng-click="guardar()"
                                     type="button"
                                     ng-disabled="!(bhabilita_guardar && forma.form.$valid)"
@@ -127,6 +127,7 @@
                                     class="btn btn-default">
                                 Limpiar
                             </button>
+                            <p class="right">{{version}}</p>
                         </div>
                     </div>
                 </div>
@@ -141,7 +142,7 @@
                             <div class="col-md-12" style="height: 400px;">
                                 <div ng-repeat="item in valijaslist">
                                     <p class="item">
-                                        <span class="item_list_round"><strong>{{item.pk.svalija}}</strong> | {{item.precinto}} | {{item.sucursal}}, {{item.plaza}} </span>
+                                        <span class="item_list_round"><strong>{{item.pk.svalija}}</strong> | {{item.precinto}} | {{item.idSucursal}} - {{item.sucursal}}, {{item.plaza}} </span>
                                     </p>
                                 </div>
                             </div>

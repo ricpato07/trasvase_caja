@@ -47,11 +47,12 @@ angular.module('myApp')
                 };
 
                 $scope.get_usuario = function () {
-                    ConsultaService.getRestAngular("usuario.action")
+                    ConsultaService.getRestAngular("persona_entrega_recibe.action?idLote=" + $scope.cat.idLote + "&status=2")
                             .then(function (result) {
                                 console.log("usuario");
                                 console.log(result);
-                                $scope.cat.personaRecibe = result.user.nombre;
+                                $scope.cat.personaEntrega = result.personaEntrega;
+                                $scope.cat.personaRecibe = result.personaRecibe;
                             })
                             .catch(function (error) {
                                 console.log(error);
@@ -120,7 +121,7 @@ angular.module('myApp')
                 };
 
                 $scope.listar_valijas = function () {
-                    ConsultaService.listRestAngular("lista_lote_valijas_banco.action?idLote=" + $scope.cat.idLote + "&status=6", null)
+                    ConsultaService.listRestAngular("lista_lote_valijas_banco.action?idLote=" + $scope.cat.idLote + "&status=7", null)
                             .then(function (result) {
                                 console.log("valijaslist");
                                 console.log(result);
@@ -189,8 +190,10 @@ angular.module('myApp')
 
                 $scope.guardar_parcial_restante2 = function () {
                     console.log("guardar_parcial_restante2");
-                    $scope.limpiar();
+                    sharedProperties.setEstado("PARCIAL");
+                    sharedProperties.setObject($scope.cat);
                     sharedProperties.setList($scope.valijas_leidas);
+                    $scope.limpiar();
                     $modal.open({
                         animation: true,
                         templateUrl: 'views/directives/modal_creado.html',
@@ -227,22 +230,43 @@ angular.module('myApp')
 
                     var res = window.confirm("¿En verdad deseas cerrar parcialmente el lote?");
                     if (res == true) {
-                        ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + $scope.cat.idLote + "&status=6", null)
+                        var params = {
+                            idLote: $scope.cat.idLote,
+                            scltcod: null,
+                            fecha: null,
+                            usuario: null,
+                            status: 6,
+                            personaEntrega: $scope.cat.personaEntrega,
+                            personaRecibe: $scope.cat.personaRecibe
+                        };
+                        ConsultaService.setRestAngular("save_lote_logistica_banco.action", params)
                                 .then(function (result) {
-                                    console.log("valijaslist leidas");
                                     console.log(result);
-                                    $scope.valijas_leidas = result;
-                                    $scope.guardar_parcial_restante();
+                                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + $scope.cat.idLote + "&status=7", null)
+                                            .then(function (result) {
+                                                console.log("valijaslist leidas");
+                                                console.log(result);
+                                                $scope.valijas_leidas = result;
+                                                $scope.guardar_parcial_restante();
+                                            })
+                                            .catch(function (error) {
+                                                $scope.valijas_leidas = [];
+                                                $scope.guardar_parcial_restante();
+                                                console.log(error);
+                                            });
                                 })
                                 .catch(function (error) {
-                                    $scope.valijas_leidas = [];
-                                    $scope.guardar_parcial_restante();
                                     console.log(error);
+                                    $scope.guardar_restante();
                                 });
+
+
                     }
                 };
 
                 $scope.guardar_restante = function () {
+                    sharedProperties.setEstado("COMPLETO");
+                    $scope.limpiar();
                     $modal.open({
                         animation: true,
                         templateUrl: 'views/directives/modal_creado.html',
@@ -271,6 +295,7 @@ angular.module('myApp')
                             scltcod: null,
                             fecha: null,
                             usuario: null,
+                            status: 7,
                             personaEntrega: $scope.cat.personaEntrega,
                             personaRecibe: $scope.cat.personaRecibe
                         };
@@ -278,9 +303,7 @@ angular.module('myApp')
                         ConsultaService.setRestAngular("save_lote_logistica_banco.action", params)
                                 .then(function (result) {
                                     console.log(result);
-                                    $scope.limpiar_error();
-                                    $scope.limpiar();
-                                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + idlote + "&status=6", null)
+                                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + idlote + "&status=7", null)
                                             .then(function (result) {
                                                 console.log("valijaslist leidas");
                                                 console.log(result);
@@ -300,7 +323,7 @@ angular.module('myApp')
                 };
 
                 $scope.ver_faltantes = function () {
-                    var modalInstance = $modal.open({
+                    $modal.open({
                         animation: true,
                         templateUrl: 'views/directives/modal_faltantes.html',
                         controller: 'FaltantesBancoController',
@@ -323,7 +346,7 @@ angular.module('myApp')
             }]);
 
 angular.module('myApp')
-        .controller('FaltantesBancoController', ['$scope', '$modal', '$modalInstance', 'ConsultaService', 'sharedProperties','UtilService',
+        .controller('FaltantesBancoController', ['$scope', '$modal', '$modalInstance', 'ConsultaService', 'sharedProperties', 'UtilService',
             function ($scope, $modal, $modalInstance, ConsultaService, sharedProperties, UtilService) {
                 $scope.modalform = {};
                 $scope.faltanteslist = [];
@@ -363,8 +386,10 @@ angular.module('myApp')
                 $scope.modal = {};
                 $scope.bdescargado = false;
                 $scope.bexcel = false;
-                $scope.status_leidas = 6;
+                $scope.status_leidas;
                 var cat = sharedProperties.getObject();
+                var estado = sharedProperties.getEstado();
+                console.log(estado);
                 $scope.valijas_leidas = sharedProperties.getList();
                 console.log("$scope.valijas_leidas");
                 console.log($scope.valijas_leidas);
@@ -374,13 +399,25 @@ angular.module('myApp')
                 };
 
                 $scope.show_message = function () {
-                    $scope.modal.mensaje = "El lote " + cat.idLote + " se ha guardado correctamente.";
+                    if (estado == "PARCIAL") {
+                        $scope.status_leidas = 7;
+                        $scope.modal.mensaje = "El lote " + cat.idLote + " se ha cerrado parcialmente.";
+                    } else {
+                        $scope.status_leidas = 7;
+                        $scope.modal.mensaje = "El lote " + cat.idLote + " se ha cerrado correctamente.";
+                    }
                 };
                 $scope.show_message();
 
                 $scope.descargar_remito = function () {
                     $scope.bdescargado = true;
-                    ConsultaService.getBlobRestAngular("remito_logistica_banco.action?idLote=" + cat.idLote + "&status=6")
+                    var remito_logistica;
+                    if (estado == "PARCIAL") {
+                        remito_logistica = "remito_logistica_banco.action?idLote=" + cat.idLote + "&status=6";
+                    } else {
+                        remito_logistica = "remito_logistica_banco.action?idLote=" + cat.idLote + "&status=7";
+                    }
+                    ConsultaService.getBlobRestAngular(remito_logistica)
                             .then(function (response) {
                                 console.log(response);
                                 ConsultaService.showBlob(response, "remito_lote_" + cat.idLote + '.pdf');

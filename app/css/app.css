@@ -108,3 +108,8 @@ html, body{
     border-color: #DD5044;
     color: #fff;
 }
+
+.right{
+  float: right;  
+  color: #7BA9D0;
+}

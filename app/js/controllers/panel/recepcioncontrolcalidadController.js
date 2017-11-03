@@ -54,11 +54,12 @@ angular.module('myApp')
                 };
 
                 $scope.get_usuario = function () {
-                    ConsultaService.getRestAngular("usuario.action")
+                    ConsultaService.getRestAngular("persona_entrega_recibe.action?idLote=" + $scope.cat.idLote + "&status=2")
                             .then(function (result) {
                                 console.log("usuario");
                                 console.log(result);
-                                $scope.cat.personaRecibe = result.user.nombre;
+                                $scope.cat.personaEntrega = result.personaEntrega;
+                                $scope.cat.personaRecibe = result.personaRecibe;
                             })
                             .catch(function (error) {
                                 console.log(error);
@@ -84,7 +85,6 @@ angular.module('myApp')
                         alert("Debes colocar el nombre de la persona que recibe");
                         return;
                     }
-
                     var params = {
                         pk: {
                             idLote: $scope.cat.idLote,
@@ -96,6 +96,7 @@ angular.module('myApp')
                         usuario: null,
                         status: 4
                     };
+
                     ConsultaService.setRestAngular("valida_lote_valijas_control.action", params)
                             .then(function (result) {
                                 console.log(result);
@@ -190,6 +191,7 @@ angular.module('myApp')
 
 
                 $scope.guardar_restante = function () {
+                    sharedProperties.setEstado("COMPLETO");
                     $modal.open({
                         animation: true,
                         templateUrl: 'views/directives/modal_creado.html',
@@ -248,7 +250,7 @@ angular.module('myApp')
                 };
 
                 $scope.ver_faltantes = function () {
-                    var modalInstance = $modal.open({
+                    $modal.open({
                         animation: true,
                         templateUrl: 'views/directives/modal_faltantes.html',
                         controller: 'FaltantesControlController',
@@ -268,6 +270,8 @@ angular.module('myApp')
                 });
 
                 $scope.rechazar_lote = function () {
+                    sharedProperties.setObject($scope.cat);
+                    sharedProperties.setEstado("RECHAZO");
                     $modal.open({
                         animation: true,
                         templateUrl: 'views/directives/modal_rechazo.html',
@@ -276,7 +280,7 @@ angular.module('myApp')
                         keyboard: false
                     });
                 };
-                
+
                 $rootScope.$on("Limpiar", function () {
                     $scope.limpiar();
                 });
@@ -320,8 +324,8 @@ angular.module('myApp')
             }]);
 
 angular.module('myApp')
-        .controller('RechazarController', ['$scope', '$modal','$rootScope', '$modalInstance', 'ConsultaService', 'sharedProperties',
-            function ($scope, $modal,$rootScope, $modalInstance, ConsultaService, sharedProperties) {
+        .controller('RechazarController', ['$scope', '$modal', '$rootScope', '$modalInstance', 'ConsultaService', 'sharedProperties',
+            function ($scope, $modal, $rootScope, $modalInstance, ConsultaService, sharedProperties) {
                 $scope.modalform = {};
                 $scope.modal = {};
                 $scope.valijas_leidas = [];
@@ -391,7 +395,17 @@ angular.module('myApp')
                 $scope.rechazar = function () {
                     console.log("rechazar");
                     $rootScope.$emit("Limpiar", {});
-                    ConsultaService.getRestAngular("rechazar_lote_control.action?idLote=" + cat.idLote + "&observaciones=" + $scope.modal.observaciones, null)
+
+                    var params = {
+                        idLote: cat.idLote,
+                        scltcod: null,
+                        fecha: null,
+                        usuario: null,
+                        personaEntrega: cat.personaEntrega,
+                        personaRecibe: cat.personaRecibe,
+                        observaciones: $scope.modal.observaciones
+                    };
+                    ConsultaService.setRestAngular("rechazar_lote_control.action", params)
                             .then(function (result) {
                                 console.log(result);
 
@@ -424,6 +438,9 @@ angular.module('myApp')
                 $scope.bexcel = false;
                 $scope.status_leidas = 3;
                 var cat = sharedProperties.getObject();
+                var estado = sharedProperties.getEstado();
+                console.log("estado");
+                console.log(estado);
                 $scope.valijas_leidas = sharedProperties.getList();
                 console.log("$scope.valijas_leidas");
                 console.log($scope.valijas_leidas);
@@ -439,7 +456,13 @@ angular.module('myApp')
 
                 $scope.descargar_remito = function () {
                     $scope.bdescargado = true;
-                    ConsultaService.getBlobRestAngular("remito_control_calidad.action?idLote=" + cat.idLote + "&status=3")
+                    var remito_control_calidad;
+                    if (estado == "RECHAZO") {
+                        remito_control_calidad = "remito_control_calidad.action?idLote=" + cat.idLote + "&status=5";
+                    } else {
+                        remito_control_calidad = "remito_control_calidad.action?idLote=" + cat.idLote + "&status=3";
+                    }
+                    ConsultaService.getBlobRestAngular(remito_control_calidad)
                             .then(function (response) {
                                 console.log(response);
                                 ConsultaService.showBlob(response, "remito_lote_" + cat.idLote + '.pdf');
