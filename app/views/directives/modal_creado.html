@@ -26,7 +26,8 @@
                     <th>Precinto</th>
                     <th>Id Sucursal</th>
                     <th>Sucursal</th>
-                    <th>Plaza</th>                                  
+                    <th>Plaza</th>      
+                    <th>Fecha entrega</th>
                     <th>Situación</th>                                  
                 </tr>
             </thead>
@@ -37,6 +38,7 @@
                     <td>{{item.idSucursal}}</td>
                     <td>{{item.sucursal}}</td>
                     <td>{{item.plaza}}</td>
+                    <td>{{item.sfecha}}</td>
                     <td>{{item.status==status_leidas?'Recibida':'Faltante'}}</td>
                 </tr>
             </tbody>

@@ -16,8 +16,7 @@ angular.module('myApp')
                 $scope.numerico_pattern = ValidaService.numerico_pattern();
                 $scope.valija_pattern = ValidaService.valija_pattern();
                 $scope.precinto_pattern = ValidaService.precinto_pattern();
-
-
+               
                 $scope.validar_lote = function () {
                     console.log($scope.cat.idLote);
                     if ($scope.cat.idLote === undefined || $scope.cat.idLote === null) {
@@ -71,10 +70,10 @@ angular.module('myApp')
                         $scope.forma.form.valija.$setValidity('required', false);
                         return;
                     }
-                    if ($scope.valija.precinto === undefined || $scope.valija.precinto === null) {
+                    /*if ($scope.valija.precinto === undefined || $scope.valija.precinto === null) {
                         $scope.forma.form.precinto.$setValidity('required', false);
                         return;
-                    }
+                    }*/
 
                     if ($scope.cat.personaEntrega === undefined || $scope.cat.personaEntrega === null) {
                         alert("Debes colocar el nombre de la persona que entrega");
@@ -203,6 +202,7 @@ angular.module('myApp')
                     });
                 };
 
+                /*
                 $scope.guardar_parcial_restante = function () {
                     console.log("guardar_parcial_restante");
                     ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + $scope.cat.idLote + "&status=4", null)
@@ -216,7 +216,7 @@ angular.module('myApp')
                                 console.log(error);
                                 $scope.guardar_parcial_restante2();
                             });
-                };
+                };*/
 
                 $scope.guardar_parcialmente = function () {
                     if ($scope.cat.personaEntrega === undefined || $scope.cat.personaEntrega === null) {
@@ -247,11 +247,11 @@ angular.module('myApp')
                                                 console.log("valijaslist leidas");
                                                 console.log(result);
                                                 $scope.valijas_leidas = result;
-                                                $scope.guardar_parcial_restante();
+                                                $scope.guardar_parcial_restante2();
                                             })
                                             .catch(function (error) {
                                                 $scope.valijas_leidas = [];
-                                                $scope.guardar_parcial_restante();
+                                                $scope.guardar_parcial_restante2();
                                                 console.log(error);
                                             });
                                 })

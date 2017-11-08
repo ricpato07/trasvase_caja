@@ -85,5 +85,5 @@ angular.module('myApp', [
                         })
             }])
         .run(['$rootScope',function ($rootScope) {
-            $rootScope.version = "4.4.4";
+            $rootScope.version = "4.4.5";
         }]);

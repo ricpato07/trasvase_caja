@@ -257,7 +257,9 @@ angular.module('myApp')
                     var modalInstance = $modal.open({
                         animation: true,
                         templateUrl: 'views/directives/modal_precinto_retorno.html',
-                        controller: 'ModalRetornoController'
+                        controller: 'ModalRetornoController',
+                        backdrop: 'static',
+                        keyboard: false
                     });
                 };
 
@@ -286,7 +288,7 @@ angular.module('myApp')
                         status: 1,
                         precinto2: cat.precinto2
                     };
-                    ConsultaService.setRestAngular("uptrasvasecajacab.action", params)
+                    ConsultaService.setRestAngular("uptrasvasecajacab_retorno.action", params)
                             .then(function (result2) {
                                 console.log(result2);
                                 $scope.limpiar();
