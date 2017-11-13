@@ -28,7 +28,7 @@ angular.module('myApp')
                 $scope.guardar_cab = function () {
                     console.log($scope.cat.subTipoTrasvase);
                     if ($scope.cat.subTipoTrasvase == undefined) {
-                         $scope.forma.form.control.$setValidity('required', false);
+                        $scope.forma.form.control.$setValidity('required', false);
                         return;
                     }
 
@@ -291,8 +291,17 @@ angular.module('myApp')
                     ConsultaService.setRestAngular("uptrasvasecajacab_retorno.action", params)
                             .then(function (result2) {
                                 console.log(result2);
+                                sharedProperties.setObject(result2);
+                                sharedProperties.setList($scope.etiquetaslist);
                                 $scope.limpiar();
-                                alert("La caja se ha cerrado correctamente.");
+                                $modal.open({
+                                    animation: true,
+                                    templateUrl: 'views/directives/modal_creado_retornos.html',
+                                    controller: 'CreadoRetornoController',
+                                    backdrop: 'static',
+                                    keyboard: false
+                                });
+                                //alert("La caja se ha cerrado correctamente.");
                             })
                             .catch(function (error) {
                                 console.log(error);
@@ -354,5 +363,54 @@ angular.module('myApp')
                         }
                     }
                 });
+
+            }]);
+
+angular.module('myApp')
+        .controller('CreadoRetornoController', ['$scope', '$modal', '$timeout', '$modalInstance', 'ConsultaService', 'sharedProperties', 'UtilService',
+            function ($scope, $modal, $timeout, $modalInstance, ConsultaService, sharedProperties, UtilService) {
+                $scope.modalform = {};
+                $scope.modal = {};
+                $scope.bdescargado = false;
+                $scope.bexcel = false;
+                var cat = sharedProperties.getObject();
+                console.log("cat");
+                console.log(cat);
+                $scope.etiquetas_leidas = sharedProperties.getList();
+                console.log("$scope.etiquetas_leidas");
+                console.log($scope.etiquetas_leidas);
+
+
+                $scope.close = function () {
+                    $modalInstance.close();
+                };
+
+                $scope.show_message = function () {
+                    $scope.modal.mensaje = "La caja S0" + cat.cajaId + " se ha cerrado correctamente.";
+
+                };
+                $scope.show_message();
+
+                $scope.descargar_remito = function () {
+                    $scope.bdescargado = true;
+                    ConsultaService.getBlobRestAngular("remito_trasvase_retornos.action?idtrasvase=" + cat.idtrasvase)
+                            .then(function (response) {
+                                console.log(response);
+                                ConsultaService.showBlob(response, "remito_trasvase_" + cat.idtrasvase + '.pdf');
+                            })
+                            .catch(function (men) {
+                                console.log(men);
+                            });
+                };
+
+                $scope.descargar_excel = function (tableId) {
+                    $scope.bexcel = true;
+                    var exportHref = UtilService.tableToExcel(tableId, 'Etiquetas leidas');
+                    if (exportHref !== null) {
+                        $timeout(function () {
+                            location.href = exportHref;
+                        }, 100); // trigger download
+                    }
+                };
 
             }]);

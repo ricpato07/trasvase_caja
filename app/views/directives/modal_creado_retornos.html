@@ -1,0 +1,47 @@
+<div ng-form="modalform.form">
+    <div style='text-align:right; width: 600px;' class='modal-header'>
+        <button class='btn btn-primary' ng-click='close()'> X</button>
+    </div>
+    <div class='modal-body' style='width: 600px;height: 200px;'>
+        <h4>{{modal.mensaje}}</h4>
+        <div style="margin-top: 20px;">
+            <button type="button"
+                    ng-click="descargar_remito()"
+                    ng-disabled="bdescargado"
+                    class="btn btn-default">
+                Descargar recibo
+            </button>
+            <button type="button"
+                    style="margin-left: 10px;"
+                    ng-click="descargar_excel('tabla-etiquetas')"
+                    ng-disabled="bexcel"
+                    class="btn btn-default">
+                Descargar Excel
+            </button>
+        </div>
+        <table class="table" id="tabla-etiquetas" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Etiqueta</th>
+                    <th>Tipo</th>
+                    <th>Tipo documento</th>
+                    <th>Expediente</th>
+                    <th>Operatoria</th>      
+                    <th>Crédito</th>
+                    <th>Acreditado</th>                                  
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in etiquetas_leidas">                                        
+                    <td>{{item.tipoEtiqueta=='U'?'U0':'T'}}{{item.pk.etiqueta}}</td>
+                    <td>{{item.tipo}}</td>
+                    <td>{{item.tipoDocumento}}</td>
+                    <td>U0{{item.nunicodoc}}</td>
+                    <td>{{item.operatoria}}</td>
+                    <td>{{item.credito}}</td>
+                    <td>{{item.acreditado}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
