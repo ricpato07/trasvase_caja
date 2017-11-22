@@ -69,10 +69,11 @@ angular.module('myApp')
                         $scope.forma.form.valija.$setValidity('required', false);
                         return;
                     }
+                    /*
                     if ($scope.valija.precinto === undefined || $scope.valija.precinto === null) {
                         $scope.forma.form.precinto.$setValidity('required', false);
                         return;
-                    }
+                    }*/
 
                     if ($scope.cat.personaEntrega === undefined || $scope.cat.personaEntrega === null) {
                         alert("Debes colocar el nombre de la persona que entrega");
@@ -112,9 +113,9 @@ angular.module('myApp')
                     $scope.error = {};
                     $scope.forma.form.$error = {};
                     $scope.forma.form.valija.$error = {};
-                    $scope.forma.form.precinto.$error = {};
+                    //$scope.forma.form.precinto.$error = {};
                     $scope.forma.form.valija.$touched = false;
-                    $scope.forma.form.precinto.$touched = false;
+                    //$scope.forma.form.precinto.$touched = false;
                     $("#valija").focus();
                 };
 
@@ -142,7 +143,7 @@ angular.module('myApp')
                     $scope.forma.form.$error = {};
                     $scope.forma.form.lote.$error = {};
                     $scope.forma.form.valija.$error = {};
-                    $scope.forma.form.precinto.$error = {};
+//                    $scope.forma.form.precinto.$error = {};
                     $scope.forma.form.persona_entrega.$error = {};
                     $scope.forma.form.persona_recibe.$error = {};
                     /*$scope.forma.form.lote.$invalid = false;
@@ -154,7 +155,7 @@ angular.module('myApp')
                     $scope.forma.form.persona_entrega.$invalid = false;
                     $scope.forma.form.lote.$touched = false;
                     $scope.forma.form.valija.$touched = false;
-                    $scope.forma.form.precinto.$touched = false;
+//                    $scope.forma.form.precinto.$touched = false;
                     $scope.forma.form.persona_entrega.$touched = false;
                     $scope.forma.form.persona_recibe.$touched = false;
                     $scope.bhabilita_faltantes = false;
