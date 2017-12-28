@@ -361,7 +361,11 @@ angular.module('myApp')
                             .then(function (result) {
                                 console.log("faltantes");
                                 console.log(result);
-                                $scope.faltanteslist = result;
+                                for(var i=0; i < result.length; i++){
+                                    if(result[i].status == 4){
+                                        $scope.faltanteslist.push(result[i]);
+                                    }
+                                }
                             })
                             .catch(function (error) {
                                 console.log(error);

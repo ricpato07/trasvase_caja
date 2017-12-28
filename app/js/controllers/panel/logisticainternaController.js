@@ -69,11 +69,11 @@ angular.module('myApp')
                         $scope.forma.form.valija.$setValidity('required', false);
                         return;
                     }
-                    /*
+                    
                     if ($scope.valija.precinto === undefined || $scope.valija.precinto === null) {
                         $scope.forma.form.precinto.$setValidity('required', false);
                         return;
-                    }*/
+                    }
 
                     if ($scope.cat.personaEntrega === undefined || $scope.cat.personaEntrega === null) {
                         alert("Debes colocar el nombre de la persona que entrega");

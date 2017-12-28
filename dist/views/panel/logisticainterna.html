@@ -74,13 +74,13 @@
                                        ng-disabled="!bvalija"
                                        placeholder="G############"
                                        ng-pattern="valija_pattern"
-                                       ng-keyup="$event.keyCode == 13 ? validar_valija() : null"
+                                       ng-keyup="$event.keyCode == 13 ? valija_action() : null"
                                        >
                                 <span class="mensaje-form" ng-show="forma.form.valija.$error.pattern">* El formato de la valija es incorrecto<br/></span>
                                 <span class="mensaje-form" ng-show="forma.form.valija.$error.error_valija">{{error.error_valija}}<br/></span>
                             </div>
                         </div>
-                        <div class="col-sm-4 col-md-4" ng-if="false">
+                        <div class="col-sm-4 col-md-4">
                             <div class="form-group"
                                  ng-class="{'has-error':forma.form.precinto.$invalid && forma.form.precinto.$touched}">
                                 <label for="precinto">Precinto:</label>

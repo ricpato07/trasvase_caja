@@ -110,12 +110,20 @@
                             </button>
                             <button type="button"
                                     style="margin-left: 10px;"
+                                    ng-click="guardar_parcial()"
+                                    ng-disabled="!(bhabilita_parcial && forma.form.$valid)"
+                                    class="btn btn-default pull-left">
+                                Recibir parcialmente
+                            </button>
+                            <button type="button"
+                                    style="margin-left: 10px;"
                                     ng-click="ver_faltantes()"
                                     ng-disabled="!bhabilita_faltantes"
                                     class="btn btn-default pull-left">
                                 Ver faltantes
                             </button>
-                            <button ng-click="rechazar_lote()"
+                            <button ng-if="false" 
+                                    ng-click="rechazar_lote()"
                                     style="margin-left: 10px;"
                                     ng-disabled="!(bhabilita_rechazo)"
                                     type="button"

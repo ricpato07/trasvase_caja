@@ -36,38 +36,9 @@ angular.module('myApp')
                             .then(function (result) {
                                 console.log(result);
                                 console.log(result.status);
-                                /*
-                                 private Long idtrasvase;
-                                 private String usuario;
-                                 private Date fechaRegistro;
-                                 private int cajaId;
-                                 private String precinto;
-                                 private int status;
-                                 private String precinto2;
-                                 * */
+
                                 if (result.status == null || result.status == undefined) {
-                                    var params = {
-                                        idtrasvase: null,
-                                        usuario: null,
-                                        fechaRegistro: null,
-                                        cajaId: Number($scope.cat.cajaId.substring(1)),
-                                        precinto: null,
-                                        status: 0,
-                                        precinto2: null
-                                    };
-                                    ConsultaService.setRestAngular("trasvasecajacab.action", params)
-                                            .then(function (result2) {
-                                                console.log(result2);
-                                                $scope.cat.idtrasvase = result2.idtrasvase;
-                                                sharedProperties.setObject($scope.cat);
-                                                $scope.habilitainput("operatoria");
-                                                $scope.limpiar_error();
-                                            })
-                                            .catch(function (error2) {
-                                                console.log(error2);
-                                                $scope.forma.form.caja.$setValidity('error_caja', false);
-                                                $scope.error.error_caja = error2.data.men;
-                                            });
+                                    guardar_cab2();
                                 } else {
                                     $scope.cat.idtrasvase = result.trasvase.idtrasvase;
                                     sharedProperties.setObject($scope.cat);
@@ -78,10 +49,62 @@ angular.module('myApp')
                             })
                             .catch(function (error) {
                                 console.log(error);
-                                $scope.forma.form.caja.$setValidity('error_caja', false);
-                                $scope.error.error_caja = error.data.men;
+                                if (error.data.men.indexOf("trasvase activo") !== -1) {
+                                    var res = window.confirm(error.data.men + "\n¿Deseas cancelar el trasvase activo para poder ocuparla?");
+                                    if (res == true) {
+                                        ConsultaService.getRestAngular("cancelatrasvase.action?idtrasvase=" + error.data.SbTrasvaseCajaCab.idtrasvase)
+                                                .then(function (result3) {
+                                                    console.log(result3);
+                                                    guardar_cab2();
+                                                })
+                                                .catch(function (error3) {
+                                                    console.log(error3);
+                                                });
+                                    }
+                                } else {
+                                    $scope.forma.form.caja.$setValidity('error_caja', false);
+                                    $scope.error.error_caja = error.data.men;
+                                }
                             });
                 };
+
+                function guardar_cab2() {
+
+                    /*
+                     private Long idtrasvase;
+                     private String usuario;
+                     private Date fechaRegistro;
+                     private int cajaId;
+                     private String precinto;
+                     private int status;
+                     private String precinto2;
+                     * */
+
+                    var params = {
+                        idtrasvase: null,
+                        usuario: null,
+                        fechaRegistro: null,
+                        cajaId: Number($scope.cat.cajaId.substring(1)),
+                        precinto: null,
+                        status: 0,
+                        precinto2: null
+                    };
+
+                    ConsultaService.setRestAngular("trasvasecajacab.action", params)
+                            .then(function (result2) {
+                                console.log(result2);
+                                $scope.cat.idtrasvase = result2.idtrasvase;
+                                sharedProperties.setObject($scope.cat);
+                                $scope.habilitainput("operatoria");
+                                $scope.limpiar_error();
+                            })
+                            .catch(function (error2) {
+                                console.log(error2);
+                                $scope.forma.form.caja.$setValidity('error_caja', false);
+                                $scope.error.error_caja = error2.data.men;
+                            });
+                }
+                
 
                 $scope.guardar_deta = function () {
 
@@ -242,7 +265,9 @@ angular.module('myApp')
                     var modalInstance = $modal.open({
                         animation: true,
                         templateUrl: 'views/directives/modal_precinto.html',
-                        controller: 'ModalController'
+                        controller: 'ModalController',
+                        backdrop: 'static',
+                        keyboard: false
                     });
                 };
 
@@ -283,8 +308,9 @@ angular.module('myApp')
                             });
                 };
 
-            }])
-        ;
+
+
+            }]);
 
 angular.module('myApp')
         .controller('ModalController', ['$scope', '$modal', '$modalInstance', '$rootScope', 'ValidaService', 'sharedProperties', 'ConsultaService',

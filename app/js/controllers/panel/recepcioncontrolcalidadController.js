@@ -263,6 +263,7 @@ angular.module('myApp')
                     if ($scope.forma.form !== undefined) {
                         if (newValue != undefined) {
                             if (newValue.length > 0) {
+                                $scope.bhabilita_parcial = newValue.length < $scope.cat.totalValijas;
                                 $scope.bhabilita_guardar = newValue.length == $scope.cat.totalValijas;
                             }
                         }
@@ -274,8 +275,20 @@ angular.module('myApp')
                     sharedProperties.setEstado("RECHAZO");
                     $modal.open({
                         animation: true,
-                        templateUrl: 'views/directives/modal_rechazo.html',
+                        templateUrl: 'views/directives/modal_parcial.html',
                         controller: 'RechazarController',
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                };
+                
+                $scope.guardar_parcial = function () {
+                    sharedProperties.setObject($scope.cat);
+                    sharedProperties.setEstado("PARCIAL");
+                    $modal.open({
+                        animation: true,
+                        templateUrl: 'views/directives/modal_parcial.html',
+                        controller: 'ParcialControlCalidadController',
                         backdrop: 'static',
                         keyboard: false
                     });
@@ -483,3 +496,109 @@ angular.module('myApp')
 
             }]);
         
+angular.module('myApp')
+        .controller('ParcialControlCalidadController', ['$scope', '$modal', '$rootScope', '$modalInstance', 'ConsultaService', 'sharedProperties',
+            function ($scope, $modal, $rootScope, $modalInstance, ConsultaService, sharedProperties) {
+                $scope.modalform = {};
+                $scope.modal = {};
+                $scope.valijas_leidas = [];
+                $scope.status_leidas = 3;
+                $scope.bvalijastodas = true;
+                var cat = sharedProperties.getObject();
+
+                $scope.close = function () {
+                    $modalInstance.close();
+                };
+
+                $scope.listar_valijas_pendientes = function () {
+
+                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + cat.idLote + "&status=2", null)
+                            .then(function (result) {
+                                console.log("valijaslist pendientes");
+                                console.log(result);
+                                $scope.valijas_leidas.concat(result);
+                                sharedProperties.setList($scope.valijas_leidas);
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                };
+
+                $scope.listar_valijas_leidas = function () {
+                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + cat.idLote + "&status=3", null)
+                            .then(function (result) {
+                                console.log("valijaslist leidas");
+                                console.log(result);
+                                $scope.valijas_leidas = result;
+                                $scope.listar_valijas_pendientes();
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                };
+
+                $scope.guardar_parcial_restante2 = function () {
+                    console.log("guardar_parcial_restante2");
+                    $scope.close();
+                    sharedProperties.setList($scope.valijas_leidas);
+                    $modal.open({
+                        animation: true,
+                        templateUrl: 'views/directives/modal_creado.html',
+                        controller: 'CreadoControlController',
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                };
+
+                $scope.guardar_parcial_restante = function () {
+                    console.log("guardar_parcial_restante");
+                    ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + cat.idLote + "&status=2", null)
+                            .then(function (result) {
+                                console.log("valijaslist pendientes");
+                                console.log(result);
+                                $scope.valijas_leidas = $scope.valijas_leidas.concat(result);
+                                $scope.guardar_parcial_restante2();
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                                $scope.guardar_parcial_restante2();
+                            });
+                };
+
+                $scope.guardar_parcialmente = function () {
+                    console.log("guardar_parcialmente");
+                    $rootScope.$emit("Limpiar", {});
+
+                    var params = {
+                        idLote: cat.idLote,
+                        scltcod: null,
+                        fecha: null,
+                        usuario: null,
+                        personaEntrega: cat.personaEntrega,
+                        personaRecibe: cat.personaRecibe,
+                        observaciones: $scope.modal.observaciones
+                    };
+                    ConsultaService.setRestAngular("guardar_parcial_lote_control.action", params)
+                            .then(function (result) {
+                                console.log(result);
+
+                                ConsultaService.listRestAngular("lista_lote_valijas.action?idLote=" + cat.idLote + "&status=3", null)
+                                        .then(function (result) {
+                                            console.log("valijaslist leidas");
+                                            console.log(result);
+                                            $scope.valijas_leidas = result;
+                                            $scope.guardar_parcial_restante();
+                                        })
+                                        .catch(function (error) {
+                                            $scope.valijas_leidas = [];
+                                            $scope.guardar_parcial_restante();
+                                            console.log(error);
+                                        });
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                };
+
+
+            }]);        

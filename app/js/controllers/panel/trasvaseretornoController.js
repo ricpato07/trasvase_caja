@@ -32,39 +32,13 @@ angular.module('myApp')
                         return;
                     }
 
-//                    $scope.habilitainput("caja");
-//                    $scope.limpiar_error();
-
                     ConsultaService.getRestAngular("valida_caja_retorno.action?cajaId=" + $scope.cat.cajaId.substring(1))
                             .then(function (result) {
                                 console.log(result);
                                 console.log(result.status);
 
                                 if (result.status == null || result.status == undefined) {
-                                    var params = {
-                                        idtrasvase: null,
-                                        usuario: null,
-                                        fechaRegistro: null,
-                                        cajaId: Number($scope.cat.cajaId.substring(1)),
-                                        precinto: null,
-                                        status: 0,
-                                        precinto2: null,
-                                        tipoTrasvase: null,
-                                        subTipoTrasvase: $scope.cat.subTipoTrasvase
-                                    };
-                                    ConsultaService.setRestAngular("trasvasecajacab_retorno.action", params)
-                                            .then(function (result2) {
-                                                console.log(result2);
-                                                $scope.cat.idtrasvase = result2.idtrasvase;
-                                                sharedProperties.setObject($scope.cat);
-                                                $scope.habilitainput("caja");
-                                                $scope.limpiar_error();
-                                            })
-                                            .catch(function (error2) {
-                                                console.log(error2);
-                                                $scope.forma.form.caja.$setValidity('error_caja', false);
-                                                $scope.error.error_caja = error2.data.men;
-                                            });
+                                    guardar_cab2();
                                 } else {
                                     $scope.cat.idtrasvase = result.trasvase.idtrasvase;
                                     $scope.cat.subTipoTrasvase = result.trasvase.subTipoTrasvase;
@@ -76,11 +50,54 @@ angular.module('myApp')
                             })
                             .catch(function (error) {
                                 console.log(error);
-                                $scope.forma.form.caja.$setValidity('error_caja', false);
-                                $scope.error.error_caja = error.data.men;
+                                if (error.data.men.indexOf("trasvase activo") !== -1) {
+                                    var res = window.confirm(error.data.men + "\n¿Deseas cancelar el trasvase activo para poder ocuparla?");
+                                    if (res == true) {
+                                        ConsultaService.getRestAngular("cancelatrasvase.action?idtrasvase=" + error.data.SbTrasvaseCajaCab.idtrasvase)
+                                                .then(function (result3) {
+                                                    console.log(result3);
+                                                    guardar_cab2();
+                                                })
+                                                .catch(function (error3) {
+                                                    console.log(error3);
+                                                });
+                                    }
+                                } else {
+                                    $scope.forma.form.caja.$setValidity('error_caja', false);
+                                    $scope.error.error_caja = error.data.men;
+                                }
                             });
-
                 };
+
+                function guardar_cab2() {
+                    
+                    var params = {
+                        idtrasvase: null,
+                        usuario: null,
+                        fechaRegistro: null,
+                        cajaId: Number($scope.cat.cajaId.substring(1)),
+                        precinto: null,
+                        status: 0,
+                        precinto2: null,
+                        tipoTrasvase: null,
+                        subTipoTrasvase: $scope.cat.subTipoTrasvase
+                    };
+                    
+                    ConsultaService.setRestAngular("trasvasecajacab_retorno.action", params)
+                            .then(function (result2) {
+                                console.log(result2);
+                                $scope.cat.idtrasvase = result2.idtrasvase;
+                                sharedProperties.setObject($scope.cat);
+                                $scope.habilitainput("caja");
+                                $scope.limpiar_error();
+                            })
+                            .catch(function (error2) {
+                                console.log(error2);
+                                $scope.forma.form.caja.$setValidity('error_caja', false);
+                                $scope.error.error_caja = error2.data.men;
+                            });
+                            
+                }
 
                 $scope.guardar_deta = function () {
 
