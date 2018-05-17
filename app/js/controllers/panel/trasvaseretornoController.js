@@ -32,7 +32,7 @@ angular.module('myApp')
                         return;
                     }
 
-                    ConsultaService.getRestAngular("valida_caja_retorno.action?cajaId=" + $scope.cat.cajaId.substring(1))
+                    ConsultaService.getRestAngular("valida_caja_retorno.action?cajaId=" + $scope.cat.cajaId.substring(1)+"&subTipoTrasvase="+$scope.cat.subTipoTrasvase)
                             .then(function (result) {
                                 console.log(result);
                                 console.log(result.status);
@@ -87,9 +87,11 @@ angular.module('myApp')
                             .then(function (result2) {
                                 console.log(result2);
                                 $scope.cat.idtrasvase = result2.idtrasvase;
+                                $scope.cat.subTipoTrasvase = result2.subTipoTrasvase;
                                 sharedProperties.setObject($scope.cat);
                                 $scope.habilitainput("caja");
                                 $scope.limpiar_error();
+                                $scope.listar_etiquetas();
                             })
                             .catch(function (error2) {
                                 console.log(error2);

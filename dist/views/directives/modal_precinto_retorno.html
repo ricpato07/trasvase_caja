@@ -12,6 +12,7 @@
                    ng-maxlength='15'
                    maxlength='15'
                    ng-pattern='precinto_pattern'
+                   placeholder='CV###### ######'
                    required>
             <span class='mensaje-form' ng-show='modalform.form.precinto.$error.pattern'>* El formato del precinto es incorrecto<br/></span>
         </div>
@@ -24,6 +25,7 @@
                    ng-maxlength='15'
                    maxlength='15'
                    ng-pattern='precinto_pattern'
+                   placeholder='CV###### ######'
                    ng-keyup="$event.keyCode == 13 ? cerrar_caja_confirm() : null"
                    required>
             <span class='mensaje-form' ng-show='modalform.form.precinto2.$error.pattern'>* El formato del precinto es incorrecto<br/></span>

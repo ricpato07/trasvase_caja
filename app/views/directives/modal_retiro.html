@@ -1,0 +1,16 @@
+<div ng-form="modalform.form">
+    <div style='text-align:right; width: 600px;' class='modal-header'>
+        <button class='btn btn-primary' ng-click='close()'> X</button>
+    </div>
+    <div class='modal-body' style='width: 600px;height: 200px;'>
+        <h4>{{modal.mensaje}}</h4>
+        <div style="margin-top: 20px;">
+            <button type="button"
+                    ng-click="descargar_remito()"
+                    ng-disabled="bdescargado"
+                    class="btn btn-default">
+                Descargar recibo
+            </button>
+        </div>
+    </div>
+</div>

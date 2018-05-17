@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('myApp', [
+    'services.config',
     'ui.router',
     'ui.grid',
     'ui.grid.resizeColumns',
@@ -10,16 +11,21 @@ angular.module('myApp', [
     'angular-loading-bar',
     'angular-bind-html-compile'
 ])
-        .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'RestangularProvider', '$provide',
-            function ($stateProvider, $urlRouterProvider, $httpProvider, RestangularProvider, $provide) {
+        .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'RestangularProvider', '$provide','configuration',
+            function ($stateProvider, $urlRouterProvider, $httpProvider, RestangularProvider, $provide, configuration) {
 
                 //obtener ruta del servidor para asignar el servidor REST
+               
                 var pathname = window.location.pathname.substring(1);
                 var origin = window.location.origin;
                 pathname = pathname.substring(0, pathname.indexOf("/"));
                 var path = origin + "/" + pathname + "/";
                 console.log(path);
                 RestangularProvider.setBaseUrl(path);
+                
+               
+                 //configuración para correr localmente
+               //RestangularProvider.setBaseUrl(configuration.apiEndpoint);
 
                 //$httpProvider.interceptors.push('myMaskInterceptor');
 
@@ -83,7 +89,12 @@ angular.module('myApp', [
                             templateUrl: 'views/panel/trasvaseretornos.html',
                             controller: 'TrasvaseretornoController'
                         })
+                        .state('retiro_cajas', {
+                            url: '/retiro_cajas',
+                            templateUrl: 'views/panel/retirocajas.html',
+                            controller: 'RetiroCajasController'
+                        })
             }])
         .run(['$rootScope',function ($rootScope) {
-            $rootScope.version = "4.7.4";
+            $rootScope.version = "4.9.0";
         }]);

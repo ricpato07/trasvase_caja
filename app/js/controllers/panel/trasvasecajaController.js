@@ -97,6 +97,7 @@ angular.module('myApp')
                                 sharedProperties.setObject($scope.cat);
                                 $scope.habilitainput("operatoria");
                                 $scope.limpiar_error();
+                                $scope.listar_etiquetas();
                             })
                             .catch(function (error2) {
                                 console.log(error2);
@@ -104,7 +105,7 @@ angular.module('myApp')
                                 $scope.error.error_caja = error2.data.men;
                             });
                 }
-                
+
 
                 $scope.guardar_deta = function () {
 
@@ -171,6 +172,7 @@ angular.module('myApp')
                                 $scope.etiquetaslist = result;
                             })
                             .catch(function (error) {
+                                 $scope.etiquetaslist = [];
                                 console.log(error);
                             });
                 };
@@ -192,8 +194,18 @@ angular.module('myApp')
 
                     if ($scope.forma.form !== undefined) {
                         if (newValue != undefined && newValue != "") {
-                            $scope.habilitainput("etiqueta");
-                            $scope.forma.form.operatoria.$setValidity('required', true);
+                            ConsultaService.getRestAngular("valida_caja_operatoria.action?cajaId=" + $scope.cat.cajaId.substring(1)+"&idoperatoria="+$scope.cat.idoperatoria)
+                                    .then(function (result) {
+                                        $scope.habilitainput("etiqueta");
+                                        $scope.forma.form.operatoria.$setValidity('required', true);
+                                        $scope.forma.form.caja.$invalid = false;
+                                        $scope.forma.form.caja.$setValidity('error_caja', true);
+                                    }).catch(function (error) {
+                                console.log(error);
+                                $scope.habilitainput("operatoria");
+                                $scope.forma.form.caja.$setValidity('error_caja', false);
+                                $scope.error.error_caja = error.data.men;
+                            });
                         } else {
                             if ($scope.cat.cajaId != undefined) {
                                 $scope.habilitainput("operatoria");
