@@ -113,3 +113,11 @@ html, body{
   float: right;  
   color: #7BA9D0;
 }
+
+.left{
+  float: left;  
+}
+
+.center{
+    text-align:center;
+}

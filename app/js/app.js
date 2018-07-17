@@ -94,7 +94,12 @@ angular.module('myApp', [
                             templateUrl: 'views/panel/retirocajas.html',
                             controller: 'RetiroCajasController'
                         })
+                        .state('recepcion_captura', {
+                            url: '/recepcion_captura',
+                            templateUrl: 'views/panel/recepcion_captura.html',
+                            controller: 'RecepcioncapturaController'
+                        })
             }])
         .run(['$rootScope',function ($rootScope) {
-            $rootScope.version = "4.9.0";
+            $rootScope.version = "4.9.12";
         }]);

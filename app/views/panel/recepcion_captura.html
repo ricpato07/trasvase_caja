@@ -1,0 +1,273 @@
+<div class="fondogris">
+    <div bind-html-compile="message.html"></div>
+    <section class="content">
+        <div ng-form="forma.form">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Recepción de cajas, valijas y expedientes</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-3 col-md-3">
+                            <div class="form-group" ng-class="{'has-error':forma.form.tipo_flujo.$invalid && forma.form.tipo_flujo.$touched}">
+                                <label for="tipo_flujo">Tipo de flujo:</label>
+                                <select id="tipo_flujo" name="tipo_flujo"
+                                        class="form-control"
+                                        ng-model="cat.tipoflujo"
+                                        ng-disabled="!btipoflujo">
+                                    <option value="">--Selecciona el flujo--</option>
+                                    <option value="1">Mesa física</option>
+                                    <option value="2">PYME</option>
+                                    <option value="3">Reoriginaciones</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3">
+                            <div class="form-group" ng-class="{'has-error':forma.form.tipo_recepcion.$invalid && forma.form.tipo_recepcion.$touched}">
+                                <label for="tipo_recepcion">Tipo recepción:</label>
+                                <select id="tipo_recepcion" name="tipo_recepcion"
+                                        class="form-control"
+                                        ng-model="cat.tipo_recepcion"
+                                        ng-disabled="!btiporecepcion">
+                                    <option value="">--Selecciona el tipo--</option>
+                                    <option ng-repeat="tipo in tiporecepcionlist" value="{{tipo.clave}}">
+                                        {{tipo.descripcion}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3">
+                            <div class="form-group" ng-class="{'has-error':forma.form.sucursal.$invalid && forma.form.sucursal.$touched}">
+                                <label for="sucursal">Sucursal:</label>
+                                <select id="sucursal" name="sucursal"
+                                        class="form-control"
+                                        ng-model="cat.sucursal"
+                                        ng-disabled="!bsucursal">
+                                    <option value="">--Selecciona la sucursal--</option>
+                                    <option ng-repeat="item in sucursaleslist" value="{{item.sbSucursalPK.ssccod}}">
+                                        {{item.descripcion}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3">
+                            <div class="form-group" ng-class="{'has-error':forma.form.incidencia.$invalid && forma.form.incidencia.$touched}">
+                                <label for="incidencia">Incidencia:</label>
+                                <select id="incidencia" name="incidencia"
+                                        class="form-control"
+                                        ng-model="cat.incidencia"
+                                        ng-disabled="!bincidencia">
+                                    <option value="">--Selecciona la sucursal--</option>
+                                    <option ng-repeat="item in incidenciaslist" value="{{item.id}}">
+                                        {{item.tipoIncidencia}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3" ng-if="bshowcaja">
+                            <div class="form-group"
+                                 ng-class="{'has-error':forma.form.caja.$invalid && forma.form.caja.$touched}">
+                                <label for="caja">Caja:</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="caja" name="caja"
+                                       ng-model="cat.caja"
+                                       placeholder="S########"
+                                       ng-maxlength="9"
+                                       maxlength="9"
+                                       ng-pattern="caja_pattern"
+                                       ng-disabled="!bcaja"
+                                       upper-case style="text-transform:uppercase;"
+                                       ng-keyup="$event.keyCode == 13 ? caja_action() : null"
+                                       >
+                                <span class="mensaje-form" ng-show="forma.form.caja.$error.pattern">* El formato de la caja es incorrecto<br/></span>
+                                <span class="mensaje-form" ng-show="forma.form.caja.$error.error_caja">{{error.error_caja}}<br/></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3" ng-if="bshowvalija">
+                            <div class="form-group"
+                                 ng-class="{'has-error':forma.form.valija.$invalid && forma.form.valija.$touched}">
+                                <label for="valija">Valija:</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="valija" name="valija"
+                                       ng-model="cat.valija"
+                                       ng-maxlength="13"
+                                       maxlength="13"
+                                       ng-disabled="!bvalija"
+                                       placeholder="G############"
+                                       required="true"
+                                       ng-pattern="valija_pattern"
+                                       ng-keyup="$event.keyCode == 13 ? valija_action() : null"
+                                       >
+                                <span class="mensaje-form" ng-show="forma.form.valija.$error.pattern">* El formato de la valija es incorrecto<br/></span>
+                                <span class="mensaje-form" ng-show="forma.form.valija.$error.error_valija">{{error.error_valija}}<br/></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3" ng-if="bshowsegurisello">
+                            <div class="form-group"
+                                 ng-class="{'has-error':forma.form.segurisello.$invalid && forma.form.segurisello.$touched}">
+                                <label for="segurisello">Segurisello:</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="segurisello" name="segurisello"
+                                       ng-model="cat.segurisello"
+                                       ng-required="true"
+                                       ng-disabled="!bsegurisello"
+                                       ng-maxlength="20"
+                                       maxlength="20"
+                                       ng-keyup="$event.keyCode == 13 ? segurisello_action() : null"
+                                       >
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3">
+                            <div class="form-group" ng-class="{'has-error':forma.form.expediente.$invalid && forma.form.expediente.$touched}">
+                                <label for="expediente">Expediente:</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="expediente" name="expediente"
+                                       ng-model="cat.expediente"
+                                       ng-maxlength="11"
+                                       maxlength="11"
+                                       ng-disabled="!bexpediente"
+                                       ng-required="true"
+                                       ng-pattern="expediente_pattern"
+                                       ng-keyup="$event.keyCode == 13 ? expediente_action() : null"
+                                       >
+                                <span class="mensaje-form" ng-show="forma.form.expediente.$error.pattern">* El formato del expediente es incorrecto<br/></span>
+                                <span class="mensaje-form" ng-show="forma.form.expediente.$error.error_expediente">{{error.error_expediente}}<br/></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3" ng-if="bshowcredito">
+                            <div class="form-group" ng-class="{'has-error':forma.form.credito.$invalid && forma.form.credito.$touched}">
+                                <label for="credito">Crédito:</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="credito" name="credito"
+                                       ng-model="cat.credito"
+                                       ng-maxlength="12"
+                                       ng-disabled="!bcredito"
+                                       maxlength="12"
+                                       ng-keyup="$event.keyCode == 13 ? credito_action() : null"
+                                       >
+                                <span class="mensaje-form" ng-show="forma.form.credito.$error.error_credito">{{error.error_credito}}<br/></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3" ng-if="bshowfolio">
+                            <div class="form-group" ng-class="{'has-error':forma.form.folio.$invalid && forma.form.folio.$touched}">
+                                <label for="folio">Folio:</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="folio" name="folio"
+                                       ng-model="cat.folio"
+                                       ng-maxlength="30"
+                                       maxlength="30"
+                                       ng-pattern="folio_pattern"
+                                       ng-disabled="!bfolio"
+                                       ng-keyup="$event.keyCode == 13 ? folio_action() : null"
+                                       >
+                                <span class="mensaje-form" ng-show="forma.form.folio.$error.pattern">* El formato del folio es incorrecto<br/></span>
+                                <span class="mensaje-form" ng-show="forma.form.folio.$error.error_folio">{{error.error_folio}}<br/></span>
+                                <span ng-show="cat.producto!= undefined">{{cat.producto}}<br/></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <button ng-click="limpiar()"
+                                    type="button"
+                                    class="btn btn btn-primary pull-left">
+                                Cerrar recepción
+                            </button>
+                            <button type="button"
+                                    style="margin-left: 10px;"
+                                    ng-click="nueva_recepcion()"
+                                    ng-disabled="!bnuevarecepcion"
+                                    class="btn btn-default">
+                                Limpiar tipo recepción 
+                            </button>
+                            <p class="right">{{version}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title left">Lista de expedientes</h3>
+                    <p style="margin-left: 50px;" class="left">Total cajas: {{no_cajas}}</p>
+                    <p style="margin-left: 50px;" class="left">Total valijas: {{no_valijas}}</p>
+                    <p style="margin-left: 50px;" class="left">Total expedientes: {{no_expedientes}}</p>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="dataTable_wrapper">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="center">Caja / Valija</th>
+                                        <th class="center">Expediente</th>
+                                        <th class="center">Tipo</th>
+                                        <th class="center">Segurisello</th>
+                                        <th class="center">Incidencia</th>
+                                        <th class="center">Sucursal</th>
+                                        <th class="center">Nombre cliente</th>
+                                        <th class="center">{{cat.tipoflujo==2?'Folio PYME':'Folio SEA'}}</th>
+                                        <th class="center">Crédito</th>
+                                        <th class="center">Tipo crédito</th>
+                                        <th class="center"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="item in lista" class="gradeA">
+                                        <td class="center"><p ng-if="item.etiqueta != '0'">{{item.etiqueta}}</p></td>
+                                        <td class="center"><p ng-if="item.tiporecepcion == 3">U0{{item.expediente}}</p></td>
+                                        <td class="center">{{item.tiporecepcion==1?'VALIJA':item.tiporecepcion==2?'CAJA':'EXPEDIENTE'}}</td>
+                                        <td class="center">{{item.segurisello}}</td>
+                                        <td>{{item.descIncidencia}}</td>
+                                        <td class="center">{{item.sucursal}}</td>
+                                        <td>{{item.nombreCliente}}</td>
+                                        <td class="center">{{item.tipoflujo==1?item.folioSEA:item.folioPYME}}</td>
+                                        <td class="center">{{item.credito}}</td>
+                                        <td class="center">
+                                            <div ng-if="item.tiporecepcion == 3">
+                                                <p ng-if="item.tipoflujo == 1">{{item.statusFolio==1?'Conciliado':'No conciliado'}}</p>
+                                                <p ng-if="item.tipoflujo == 2">{{item.statusFolio==1?'Conciliado':'No conciliado'}}</p>
+                                                <p ng-if="item.tipoflujo == 3">{{item.statusFolio==1?'Conciliado':'Nuevo ingreso'}}</p>
+                                                <p ng-if="item.tipoflujo == 4">{{item.statusFolio==1?'Conciliado':'Nuevo ingreso'}}</p>
+                                            </div>
+                                        </td>
+                                        <td class="center">
+                                            <button type="button"
+                                                    style="margin-left: 10px;"
+                                                    ng-click="eliminar_etiqueta(item.idRecepcion, item.tiporecepcion, item.tiporecepcion == 3 ? 'U0' + item.expediente : item.etiqueta)"
+                                                    class="btn btn-default">
+                                                Eliminar {{item.tiporecepcion==1?'valija':item.tiporecepcion==2?'caja':'expediente'}}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div ng-hide="listafull.length == 0" class="center">
+                                <pagination 
+                                    ng-model="currentPage"
+                                    ng-change ="paginacion(currentPage)"
+                                    total-items="listafull.length"
+                                    max-size="maxSize"  
+                                    items-per-page ="numPerPage"
+                                    boundary-links="true"
+                                    previous-text = "<"
+                                    next-text = ">"
+                                    first-text = "<<"
+                                    last-text=">>">
+                                </pagination>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-include="'views/directives/modal_mensajes.html'"></div>
+        </div>
+    </section>
+</div>
+
+

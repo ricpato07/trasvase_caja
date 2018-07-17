@@ -1,0 +1,121 @@
+<div class="modal fade" id="modalMensajes" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true" style="width: 20px; display: none;">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">{{modal.titulo}}</h4>
+            </div>
+            <form class="form-horizontal" name="form" novalidate>
+                <div class="modal-body" style='width: 600px;height: 150px;'>
+                    <p style="font-size: 16px; font-weight: bold;">{{modal.mensaje}}</p>
+                    <button ng-click="close_modal()"
+                            type="button"
+                            style="margin-top: 15px;"
+                            class="btn btn btn-primary">
+                        Aceptar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalConfirm" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true" style="width: 20px; display: none;">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">{{modal.titulo_confirm}}</h4>
+            </div>
+            <form class="form-horizontal" name="form" novalidate>
+                <div class="modal-body" style='width: 600px;height: 150px;'>
+                    <p style="font-size: 16px; font-weight: bold;">{{modal.mensaje_confirm}}</p>
+                    <button type="button"
+                            ng-click="aceptar_modal()"
+                            class="btn btn btn-primary">
+                        Aceptar
+                    </button>
+                    <button type="button"
+                            style="margin-left: 10px;"
+                            ng-click="cancelar_modal()"
+                            class="btn btn-default">
+                        Cancelar 
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalCreditoInverso" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true" style="width: 20px; display: none;">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Crédito inverso</h4>
+            </div>
+            <form class="form-horizontal" name="form" novalidate>
+                <div class="modal-body" style='width: 600px;height: 200px;'>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group" ng-class="{'has-error':error.error_creditoinverso!=undefined}">
+                            <label for="creditoinverso">Número de crédito inverso</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="creditoinverso" name="creditoinverso"
+                                   ng-model="cat.creditoinverso"
+                                   ng-maxlength="12"
+                                   maxlength="12"
+                                   ng-keyup="$event.keyCode == 13 ? credito_inverso_action() : null"
+                                   >
+                            <span class="mensaje-form" ng-show="error.error_creditoinverso!=undefined">{{error.error_creditoinverso}}<br/></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <button ng-click="credito_inverso_action()"
+                                    type="button"
+                                    style="margin-top: 15px;"
+                                    class="btn btn btn-primary">
+                                Validar
+                            </button>
+                            <button type="button"
+                                    style="margin-top: 15px; margin-left: 10px;"
+                                    ng-click="credito_inverso_cancelar()"
+                                    class="btn btn-default">
+                                Cancelar 
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalMensajes2" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true" style="width: 20px; display: none;">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">{{modal.titulo}}</h4>
+            </div>
+            <form class="form-horizontal" name="form" novalidate>
+                <div class="modal-body" style='width: 600px;height: 150px;'>
+                    <p style="font-size: 16px; font-weight: bold;">{{modal.mensaje}}</p>
+                    <button ng-click="close_modal2()"
+                            type="button"
+                            style="margin-top: 15px;"
+                            class="btn btn btn-primary">
+                        Aceptar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
