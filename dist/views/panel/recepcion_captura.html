@@ -82,6 +82,7 @@
                                        >
                                 <span class="mensaje-form" ng-show="forma.form.caja.$error.pattern">* El formato de la caja es incorrecto<br/></span>
                                 <span class="mensaje-form" ng-show="forma.form.caja.$error.error_caja">{{error.error_caja}}<br/></span>
+                                {{forma.form.caja.$error}}
                             </div>
                         </div>
                         <div class="col-sm-3 col-md-3" ng-if="bshowvalija">

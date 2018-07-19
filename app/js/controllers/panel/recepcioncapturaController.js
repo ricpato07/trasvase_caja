@@ -225,21 +225,32 @@ angular.module('myApp')
                     }
                 });
 
-
+                $scope.bshowcaja = true;
+                $scope.bcaja = true;
                 $scope.caja_action = function () {
+                  console.log($scope.cat.caja);
                     if ($scope.cat.caja != undefined) {
                         if (buscar_valija_caja_lista($scope.cat.caja, 2) == true) {
                             $scope.forma.form.caja.$setValidity('error_caja', false);
                             $scope.error.error_caja = "La caja ya fue agregada al listado";
                             return null;
                         }
-                        $scope.forma.form.caja.$setValidity('error_caja', true);
-                        $scope.error.error_caja = undefined;
-                        $scope.bcaja = false;
-                        $scope.bexpediente = true;
-                        $timeout(function () {
-                            $("#expediente").focus();
-                        });
+                                                            
+                        ConsultaService.getRestAngular("valida_caja_recepcion.action?caja=" + $scope.cat.caja)
+                                .then(function (result) {
+                                    $scope.forma.form.caja.$setValidity('error_caja', true);
+                                    $scope.error.error_caja = undefined;
+                                    $scope.bcaja = false;
+                                    $scope.bexpediente = true;
+                                    $timeout(function () {
+                                        $("#expediente").focus();
+                                    });
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                    $scope.forma.form.caja.$setValidity('error_caja', false);
+                                    $scope.error.error_caja = error.data.men;
+                                });
                     }
                 };
 
@@ -414,7 +425,7 @@ angular.module('myApp')
                 $scope.bcredito = true;
                 $scope.credito_inverso_action = function () {
                     if ($scope.cat.creditoinverso != undefined) {
-                      
+
                         if ($scope.cat.credito != ValidaService.invertir_cadena($scope.cat.creditoinverso)) {
                             $scope.error.error_creditoinverso = "El crédito inverso es incorrecto";
                             return null;
