@@ -101,5 +101,5 @@ angular.module('myApp', [
                         })
             }])
         .run(['$rootScope',function ($rootScope) {
-            $rootScope.version = "4.9.12";
+            $rootScope.version = "4.9.13";
         }]);

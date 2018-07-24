@@ -127,6 +127,8 @@ angular.module('myApp')
                 $scope.muestracredito = function (opcion) {
                     $scope.bshowcredito = false;
                     $scope.bshowfolio = false;
+                    $scope.bcredito = false;
+                    $scope.bfolio = false;
                     switch (opcion) {
                         case "credito":
                             $scope.bshowcredito = true;
@@ -422,7 +424,6 @@ angular.module('myApp')
                     }
                 };
 
-                $scope.bcredito = true;
                 $scope.credito_inverso_action = function () {
                     if ($scope.cat.creditoinverso != undefined) {
 
